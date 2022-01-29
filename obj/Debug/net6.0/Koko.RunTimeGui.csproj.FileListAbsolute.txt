@@ -1,0 +1,11 @@
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\net6.0\Koko.RunTimeGui.deps.json
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\net6.0\Koko.RunTimeGui.dll
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\net6.0\ref\Koko.RunTimeGui.dll
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\net6.0\Koko.RunTimeGui.pdb
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\net6.0\Koko.RunTimeGui.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\net6.0\Koko.RunTimeGui.AssemblyInfoInputs.cache
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\net6.0\Koko.RunTimeGui.AssemblyInfo.cs
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\net6.0\Koko.RunTimeGui.csproj.CoreCompileInputs.cache
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\net6.0\Koko.RunTimeGui.dll
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\net6.0\ref\Koko.RunTimeGui.dll
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\net6.0\Koko.RunTimeGui.pdb

@@ -1,0 +1,10 @@
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.AssemblyInfoInputs.cache
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.AssemblyInfo.cs
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.csproj.CoreCompileInputs.cache
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.deps.json
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.dll
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.pdb
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.dll
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.pdb
+C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.csproj.AssemblyReference.cache
