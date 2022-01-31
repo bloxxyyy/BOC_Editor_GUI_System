@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Koko.RunTimeGui.Gui.Initable_Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Koko.RunTimeGui;
 
 public class GUI : BaseComponent, IParent {
+
 	public static GUI Gui = new();
 
 	public bool IsRendering { get; set; } = true;

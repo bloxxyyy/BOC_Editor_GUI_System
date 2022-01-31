@@ -7,4 +7,3 @@ C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTim
 C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.pdb
 C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.dll
 C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.pdb
-C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\obj\Debug\netcoreapp3.1\Koko.RunTimeGui.csproj.AssemblyReference.cache

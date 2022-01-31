@@ -2,15 +2,21 @@
 #r "nuget: NetStandard.Library, 1.6.1"
 #r "nuget: System.Xml.ReaderWriter, 4.3.1"
 #r "nuget: System.Runtime.Serialization.Xml, 4.3.0"
+#r "C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.dll"
+#r "nuget: MonoGame.Framework.DesktopGL, 3.0.8"
+#r "nuget: MonoGame.Extended, 3.8.0"
+
 // dotnet tool install -g dotnet-script
 
-// cd C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\Generation>
+// cd C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\Generation
 // dotnet script Generator.csx
 
 using System;
 using System.IO;
 using System.Collections;
 using System.Xml;
+using Koko.RunTimeGui;
+using System.Reflection;
 
 /// <summary>
 ///  The file location where your xml files are located.
@@ -61,17 +67,8 @@ public void ProcessFile(string path, string generatedFilesLocation) {
 public void CreateNewFile(string fileName, string csharpName, string xmlpath) {
     var path = fileName;
     try {
-        // Create the file, or overwrite if the file exists.
         using (FileStream fs = File.Create(path)) {
             GenerateFileInformation(fs, csharpName, xmlpath);
-        }
-
-        // Open the stream and read it back.
-        using (StreamReader sr = File.OpenText(path)) {
-            string s = "";
-            while ((s = sr.ReadLine()) != null) {
-                Console.WriteLine(s);
-            }
         }
     } catch (Exception ex) {
         Console.WriteLine(ex.ToString());
@@ -90,19 +87,35 @@ public string CheckIfGeneratedFileExists(string fileName, string generatedFilesL
     return path;
 }
 
-public void GenerateFileInformation(FileStream fs, string name, string xmlPath) {
+private Type FindType(string qualifiedTypeName) {
+    Type t = Type.GetType(qualifiedTypeName);
 
+    if (t != null) {
+        return t;
+    } else {
+        foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
+            Console.WriteLine("Assembly:" + asm);
+            t = asm.GetType(qualifiedTypeName);
+            if (t != null)
+                return t;
+        }
+        return null;
+    }
+}
+
+public void GenerateFileInformation(FileStream fs, string name, string xmlPath) {
     XmlReaderSettings settings = new XmlReaderSettings();
     settings.IgnoreWhitespace = true;
 
     Console.WriteLine("Checking xml for path: " + xmlPath);
 
     using (var fileStream = File.OpenText(xmlPath)) {
+
         using (XmlReader reader = XmlReader.Create(fileStream, settings)) {
 
             var currentParent = "GUI.Gui";
 
-            var start = "using Koko.RunTimeGui;\n\nnamespace Koko.Generated { \npublic class " + name + " { \npublic static void Init() {\n";
+            var start = "using Koko.RunTimeGui;\nusing Koko.RunTimeGui.Gui.Initable_Components;\n\nnamespace Koko.Generated { \npublic class " + name + " : IInitable { \npublic void Init() {\n";
             var end = "}\n}\n}\n";
             var writestart = new UTF8Encoding(true).GetBytes(start);
             var writeend = new UTF8Encoding(true).GetBytes(end);
@@ -113,8 +126,24 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
 
                 switch (reader.NodeType) {
                     case XmlNodeType.Element:
-                        Console.WriteLine($"Start Element: {reader.Name}. Has Attributes? : {reader.HasAttributes}");
-                        line += Elements(reader);
+
+                        var text = "Koko.RunTimeGui." + reader.Name;
+                        Console.WriteLine("to Check: " + text);
+
+                        var type = FindType("Koko.RunTimeGui." + reader.Name);
+                        Console.WriteLine("type: " + type);
+
+                        try {
+                            var instance = Activator.CreateInstance(type) as IComponent;
+
+                            Console.WriteLine($"Start Element: {reader.Name}. Has Attributes? : {reader.HasAttributes}");
+                            line += Elements(reader, instance);
+
+                        } catch (System.Exception) {
+                            Console.WriteLine("Couldn't find: " + text + " Create it first!");
+							throw;
+						}
+
                         break;
                     case XmlNodeType.Text:
                         Console.WriteLine($"Inner Text: {reader.Value}");
@@ -138,15 +167,20 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
     }
 }
 
-string Elements(XmlReader reader) {
-    if (reader.Name == "Gui") {
+string Elements(XmlReader reader, IComponent componentType) {
+    if (reader.Name == "GUI") {
         return "IParent parent = GUI.Gui;\n IParent previousParent = null;\n";
     }
 
-    if (reader.Name == "Panel") {
+    if (componentType is IParent) {
         return "previousParent = parent;\n" +
-			"parent = new " + reader.Name + "();\n";
+           "parent = new " + reader.Name + "();\n";
     }
+
+    //if (reader.Name == "Panel" || reader.Name == "FlexPanel") {
+     //   return "previousParent = parent;\n" +
+	//		"parent = new " + reader.Name + "();\n";
+    //}
 
     if (reader.Name == "Label") {
         return "parent.ChildComponents.Add(new " + reader.Name + "());\n";
@@ -165,9 +199,9 @@ string InnerText(XmlReader reader) {
 
 string EndTag(XmlReader reader) {
 
-    if (reader.Name == "Panel") {
+    if (reader.Name == "Panel" || reader.Name == "FlexPanel") {
         return "previousParent.ChildComponents.Add((IComponent)parent);\n" +
-            "parent = previousParent;";
+            "parent = previousParent;\n";
     }
 
     return "";
