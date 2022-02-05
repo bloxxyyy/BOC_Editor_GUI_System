@@ -92,15 +92,25 @@ private Type FindType(string qualifiedTypeName) {
 
     if (t != null) {
         return t;
-    } else {
+    } else { // TODO dont go through all assemblies. Just get my own.
         foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
-            Console.WriteLine("Assembly:" + asm);
+            /*Console.WriteLine("Assembly:" + asm);*/
             t = asm.GetType(qualifiedTypeName);
             if (t != null)
                 return t;
         }
         return null;
     }
+}
+
+private Type GetType(string name) {
+    var text = "Koko.RunTimeGui." + name;
+    Console.WriteLine("to Check: " + text);
+
+    var type = FindType("Koko.RunTimeGui." + name);
+    Console.WriteLine("type: " + type);
+
+    return type;
 }
 
 public void GenerateFileInformation(FileStream fs, string name, string xmlPath) {
@@ -126,33 +136,38 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
 
                 switch (reader.NodeType) {
                     case XmlNodeType.Element:
-
-                        var text = "Koko.RunTimeGui." + reader.Name;
-                        Console.WriteLine("to Check: " + text);
-
-                        var type = FindType("Koko.RunTimeGui." + reader.Name);
-                        Console.WriteLine("type: " + type);
-
                         try {
-                            var instance = Activator.CreateInstance(type) as IComponent;
+                            var instance = Activator.CreateInstance(GetType(reader.Name)) as IComponent;
 
                             Console.WriteLine($"Start Element: {reader.Name}. Has Attributes? : {reader.HasAttributes}");
                             line += Elements(reader, instance);
 
                         } catch (System.Exception) {
-                            Console.WriteLine("Couldn't find: " + text + " Create it first!");
+                            Console.WriteLine("Couldn't find XML TYPE: " + reader.Name + " Create Component first!");
 							throw;
 						}
 
                         break;
+
                     case XmlNodeType.Text:
                         Console.WriteLine($"Inner Text: {reader.Value}");
                         line += InnerText(reader);
                         break;
+
                     case XmlNodeType.EndElement:
-                        Console.WriteLine($"End Element: {reader.Name}");
-                        line += EndTag(reader);
+                        try {
+                            var instance = Activator.CreateInstance(GetType(reader.Name)) as IComponent;
+
+                            Console.WriteLine($"End Element: {reader.Name}");
+                            line += EndTag(reader, instance);
+
+                        } catch (System.Exception) {
+                            Console.WriteLine("Couldn't find XML TYPE: " + reader.Name + " Create Component first!");
+                            throw;
+                        }
+
                         break;
+
                     default:
                         Console.WriteLine($"Unknown: {reader.NodeType}");
                         break;
@@ -168,40 +183,31 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
 }
 
 string Elements(XmlReader reader, IComponent componentType) {
-    if (reader.Name == "GUI") {
-        return "IParent parent = GUI.Gui;\n IParent previousParent = null;\n";
+
+    if (reader.Name == "GUI") { // special case.
+        return "IParent component = GUI.Gui;\n";
     }
 
     if (componentType is IParent) {
-        return "previousParent = parent;\n" +
-           "parent = new " + reader.Name + "();\n";
+        return "component = new " + reader.Name + "() { Parent = component };\n";
     }
 
-    //if (reader.Name == "Panel" || reader.Name == "FlexPanel") {
-     //   return "previousParent = parent;\n" +
-	//		"parent = new " + reader.Name + "();\n";
-    //}
+    var tag = "\""+reader.GetAttribute("Tag")+"\"";
 
-    if (reader.Name == "Label") {
-        return "parent.ChildComponents.Add(new " + reader.Name + "());\n";
-    }
-
-    if (reader.Name == "Button") {
-        return "parent.ChildComponents.Add(new " + reader.Name + "());\n";
-    }
-
-    return "";
+    return "component.ChildComponents.Add(new " + reader.Name + "() { Parent = component, Tag = " + tag +" });\n";
 }
 
 string InnerText(XmlReader reader) {
     return "";
 }
 
-string EndTag(XmlReader reader) {
+string EndTag(XmlReader reader, IComponent componentType) {
+    if (reader.Name == "GUI") { // special case.
+        return "";
+    }
 
-    if (reader.Name == "Panel" || reader.Name == "FlexPanel") {
-        return "previousParent.ChildComponents.Add((IComponent)parent);\n" +
-            "parent = previousParent;\n";
+    if (componentType is IParent) {
+        return "((BaseComponent)component).Parent.ChildComponents.Add((IComponent)component);\ncomponent = ((BaseComponent)component).Parent;\n";
     }
 
     return "";
