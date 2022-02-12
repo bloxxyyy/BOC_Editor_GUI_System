@@ -4,7 +4,7 @@
 #r "nuget: System.Runtime.Serialization.Xml, 4.3.0"
 #r "nuget: MonoGame.Framework.DesktopGL, 3.0.8"
 #r "nuget: MonoGame.Extended, 3.8.0"
-#load "Init-RunTimeLib.csx"
+#r "../bin/Debug/netcoreapp3.1/Koko.RunTimeGui.dll"
 
 // dotnet tool install -g dotnet-script
 
@@ -23,10 +23,7 @@ using System.Xml;
 using Koko.RunTimeGui;
 
 
-//var projectPath = Directory.GetCurrentDirectory();
-//var assemblyPath = projectPath + "\\bin\\Debug\\netcoreapp3.1\\Koko.RunTimeGui.dll";
-//Console.WriteLine(assemblyPath);
-//AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+var projectPath = Directory.GetCurrentDirectory();
 
 /// <summary>
 ///  The file location where your xml files are located.
