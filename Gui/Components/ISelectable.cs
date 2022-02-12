@@ -2,5 +2,5 @@
 
 public interface ISelectable {
 	public bool IsSelectable { get; set; }
-	public void OnClick();
+	public Action OnClick { get; set; }
 }

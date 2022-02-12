@@ -6,44 +6,44 @@ namespace Koko.RunTimeGui;
 
 public class Panel : BaseComponent, IParent {
 	public bool IsRendering { get; set; } = true;
-	public List<IComponent> ChildComponents { get; set; } = new();
+	public List<BaseComponent> ChildComponents { get; set; } = new();
 	public Color? BackgroundColor { get; set; } = null;
 
 	public override void Draw(SpriteBatch sb) {
 		if (!IsRendering) return;
 
 		if (BackgroundColor is not null) {
-			sb.FillRectangle(new Rectangle(Position, DisplayedSize), BackgroundColor.Value);
+
+			var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
+			sb.FillRectangle(new Rectangle(pos, DisplayedSize), BackgroundColor.Value);
 		}
 
-		foreach (var childComponent in ChildComponents) {
-			childComponent.Draw(sb);
-		}
+		for (int i = 0; i < ChildComponents.Count; i++)
+			ChildComponents[i].Draw(sb);
 	}
 
 	public override void Init() {
-		foreach (var childComponent in ChildComponents) {
-			childComponent.Init();
+		int xpos = Position.X + PaddingLeft;
+		int ypos = Position.Y + PaddingTop;
+
+		for (int i = 0; i < ChildComponents.Count; i++) {
+			ChildComponents[i].Position = new Point(xpos, ypos);
+			ChildComponents[i].Init();
+			ypos += ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical;
 		}
+
+		var height = (ypos - Position.Y) - PaddingTop;
+		DisplayedSize = new Size(GetBiggestPanelWidth(), height);
 	}
 
 	public void Update() {
 		if (!IsRendering) return;
+	}
 
-		var yChildPos = Position.Y;
-
-		for (int i = 0; i < ChildComponents.Count; i++) {
-			var x = ChildComponents[i].Position.X + Position.X;
-			var y = yChildPos;
-			ChildComponents[i].Position = new Point(x,y);
-
-			if (ChildComponents[i] is IParent child) {
-				child.Update();
-			}
-
-			yChildPos += ChildComponents[i].DisplayedSize.Height;
-		}
-
-		DisplayedSize = new Size(DisplayedSize.Width, yChildPos);
+	private int GetBiggestPanelWidth() {
+		int width = 0;
+		for (int i = 0; i < ChildComponents.Count; i++)
+			width = Math.Max(ChildComponents[i].DisplayedSize.Width + ChildComponents[i].PaddingHorizontal, width);
+		return width;
 	}
 }

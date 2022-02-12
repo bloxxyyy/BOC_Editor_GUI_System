@@ -1,5 +1,4 @@
-﻿
-using FontStashSharp;
+﻿using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -7,44 +6,38 @@ using MonoGame.Extended;
 namespace Koko.RunTimeGui;
 
 public class Button : BaseComponent, ISelectable {
-
-	private int margin = 4;
-	private int borderSize = 2;
-
 	public bool IsSelectable { get; set; }
 
-	public string Text { get; set; } = "Button";
 	public int FontSize { get; set; } = 16;
+	public Action OnClick { get; set; }
 
 	/// <summary>
 	/// To draw Text to the Window.
 	/// </summary>
 	public override void Draw(SpriteBatch sb) {
+		var width = DisplayedSize.Width + BorderSpace.Width;
+		var height = DisplayedSize.Height + BorderSpace.Height;
+		var display = new Size(width, height);
+		var pos3 = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
+		sb.FillRectangle(new Rectangle(pos3, display), Color.Black);
 
-		sb.FillRectangle(new Rectangle(Position, DisplayedSize), Color.Black);
-
-		var contentPos = new Point(Position.X + borderSize, Position.Y + borderSize);
-		var contentSize = new Point(DisplayedSize.Width - (borderSize * 2), DisplayedSize.Height - (borderSize * 2));
-		sb.FillRectangle(new Rectangle(contentPos, contentSize), Color.White);
+		var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
+		sb.FillRectangle(new Rectangle(pos, DisplayedSize), Color.Blue);
 
 		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(FontSize);
-		var textPos = new Point2(Position.X + borderSize + margin, Position.Y + borderSize + margin);
-		sb.DrawString(font18, Text, textPos, Color.Black);
+		var pos2 = new Vector2(pos.X + MarginalSpace.Left, pos.Y + MarginalSpace.Top);
+		sb.DrawString(font18, Text, pos2, Color.Black);
 	}
 
 	/// <summary>
 	/// To handle mouse input information and other nessesities.
 	/// </summary>
 	public override void Init() {
-		DisplayedSize = GuiHelper.MeasureString(Text, FontSize);
+		var size = GuiHelper.MeasureString(Text, FontSize);
+		Position = new Point(Position.X, Position.Y);
 
-		var width = DisplayedSize.Width + (margin * 2) + (borderSize * 2);
-		var height = DisplayedSize.Height + (margin * 2) + (borderSize * 2);
-
+		int width = size.Width + MarginalSpace.Width;
+		int height = size.Height + MarginalSpace.Height;
 		DisplayedSize = new Size(width, height);
-	}
-
-	public void OnClick() {
-		throw new NotImplementedException();
 	}
 }
