@@ -2,9 +2,9 @@
 #r "nuget: NetStandard.Library, 1.6.1"
 #r "nuget: System.Xml.ReaderWriter, 4.3.1"
 #r "nuget: System.Runtime.Serialization.Xml, 4.3.0"
-#r "C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.dll"
 #r "nuget: MonoGame.Framework.DesktopGL, 3.0.8"
 #r "nuget: MonoGame.Extended, 3.8.0"
+#load "Init-RunTimeLib.csx"
 
 // dotnet tool install -g dotnet-script
 
@@ -12,24 +12,39 @@
 // dotnet script Generator.csx
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Collections;
+using System.Globalization;
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Koko.RunTimeGui;
-using System.Reflection;
+
+
+//var projectPath = Directory.GetCurrentDirectory();
+//var assemblyPath = projectPath + "\\bin\\Debug\\netcoreapp3.1\\Koko.RunTimeGui.dll";
+//Console.WriteLine(assemblyPath);
+//AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
 
 /// <summary>
 ///  The file location where your xml files are located.
 /// </summary>
-var xmlFilesLocation = "C:\\Users\\mnnop\\Documents\\BOC\\BOC_Editor\\XML";
+var xmlFilesLocation = projectPath + "\\XML";
 
 /// <summary>
 ///  The file location where your generated files are stored.
 /// </summary>
-var generatedFilesLocation = "C:\\Users\\mnnop\\Documents\\BOC\\BOC_Editor\\Generated";
+var generatedFilesLocation = projectPath + "\\Generated";
 
-if (Directory.Exists(xmlFilesLocation)) {
+if (Directory.Exists(xmlFilesLocation))
+{
     ProcessDirectory(xmlFilesLocation, generatedFilesLocation);
+}
+else
+{
+    throw new ArgumentException($"Path \"{xmlFilesLocation}\" does not exist, please check your current working directory");
 }
 
 /// <summary>
