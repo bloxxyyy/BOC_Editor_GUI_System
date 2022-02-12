@@ -125,7 +125,7 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
 
             var currentParent = "GUI.Gui";
 
-            var start = "using Koko.RunTimeGui;\nusing Koko.RunTimeGui.Gui.Initable_Components;\n\nnamespace Koko.Generated { \npublic class " + name + " : IInitable { \npublic void Init() {\n";
+            var start = "using Microsoft.Xna.Framework;\nusing Koko.RunTimeGui;\nusing Koko.RunTimeGui.Gui.Initable_Components;\n\nnamespace Koko.Generated { \npublic class " + name + " : IInitable { \npublic void Init() {\n";
             var end = "}\n}\n}\n";
             var writestart = new UTF8Encoding(true).GetBytes(start);
             var writeend = new UTF8Encoding(true).GetBytes(end);
@@ -150,11 +150,23 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
                         break;
 
                     case XmlNodeType.Text:
-                        Console.WriteLine($"Inner Text: {reader.Value}");
-                        line += InnerText(reader);
+                        Text = reader.Value;
+                        if (Text is null)
+                            Text = "";
+
+                        if (Text != "") {
+                            line += Text + "\";\n" +
+                                "component.ChildComponents.Add(temp);\n";
+                        }
+
                         break;
 
                     case XmlNodeType.EndElement:
+                        if (Text == "") {
+                            line += "\";\n" +
+                                "component.ChildComponents.Add(temp);\n";
+                        }
+
                         try {
                             var instance = Activator.CreateInstance(GetType(reader.Name)) as IComponent;
 
@@ -182,23 +194,34 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
     }
 }
 
+private string Text = "";
 string Elements(XmlReader reader, IComponent componentType) {
 
     if (reader.Name == "GUI") { // special case.
-        return "IParent component = GUI.Gui;\n";
+        return "IParent component = GUI.Gui;\nBaseComponent temp;\n";
     }
+
+    var tag = "\"" + reader.GetAttribute("Tag") + "\"";
+    var margin = reader.GetAttribute("Margin");
+    var border = reader.GetAttribute("Border");
+    int convertedMargin = GetIntergerValue(margin);
+    int convertedBorder = GetIntergerValue(border);
 
     if (componentType is IParent) {
-        return "component = new " + reader.Name + "() { Parent = component };\n";
+
+        var background = reader.GetAttribute("BackGround-Color");
+        if (background is null) {
+            background = "null";
+        } else {
+            background = "Color." + background;
+        }
+
+        return "component = new " + reader.Name + "() { Parent = component, Tag = " + tag + ", BorderSpace = new Margin(" + convertedBorder + "), MarginalSpace = new Margin(" + convertedMargin + ") " + ", BackgroundColor = " + background + " };\n";
     }
 
-    var tag = "\""+reader.GetAttribute("Tag")+"\"";
-
-    return "component.ChildComponents.Add(new " + reader.Name + "() { Parent = component, Tag = " + tag +" });\n";
-}
-
-string InnerText(XmlReader reader) {
-    return "";
+    return "temp = new " + reader.Name + "() { Parent = component, Tag = " + tag + ", BorderSpace = new Margin(" + convertedBorder + "),  MarginalSpace = new Margin(" + convertedMargin + ") " + " };\n" +
+        "temp.Text = \"";
+   
 }
 
 string EndTag(XmlReader reader, IComponent componentType) {
@@ -207,8 +230,19 @@ string EndTag(XmlReader reader, IComponent componentType) {
     }
 
     if (componentType is IParent) {
-        return "((BaseComponent)component).Parent.ChildComponents.Add((IComponent)component);\ncomponent = ((BaseComponent)component).Parent;\n";
+        return "((BaseComponent)component).Parent.ChildComponents.Add((BaseComponent)component);\ncomponent = ((BaseComponent)component).Parent;\n";
     }
 
     return "";
+}
+
+int GetIntergerValue(string margin) {
+    if (margin != null) {
+        try {
+            return Int32.Parse(margin);
+        } catch (FormatException e) {
+            Console.WriteLine(e.Message);
+        }
+    }
+    return 0;
 }
