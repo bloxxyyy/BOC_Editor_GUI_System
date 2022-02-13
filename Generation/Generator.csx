@@ -224,6 +224,14 @@ string Elements(XmlReader reader, IComponent componentType) {
         var background = reader.GetAttribute("BackGround-Color");
         if (background is null) {
             background = "null";
+        } else if (background.StartsWith("#")) {
+            var rx = new Regex(@"^#(?<alpha>[0-9a-f]{2})?(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var groups = rx.Matches(background)[0].Groups;
+            var alpha = byte.Parse(groups[1].Value != "" ? groups[1].Value : "ff", NumberStyles.HexNumber);
+            var red = byte.Parse(groups[2].Value, NumberStyles.HexNumber);
+            var green = byte.Parse(groups[3].Value, NumberStyles.HexNumber);
+            var blue = byte.Parse(groups[4].Value, NumberStyles.HexNumber);
+            background = $"new Color({red}, {green}, {blue}, {alpha})";
         } else {
             background = "Color." + background;
         }
