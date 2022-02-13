@@ -12,10 +12,24 @@ public class Panel : BaseComponent, IParent {
 	public override void Draw(SpriteBatch sb) {
 		if (!IsRendering) return;
 
-		if (BackgroundColor is not null) {
+		var contentPos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
+		var borderPos = new Point(contentPos.X - BorderSpace.Left, contentPos.Y - BorderSpace.Top);
 
-			var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
-			sb.FillRectangle(new Rectangle(pos, DisplayedSize), BackgroundColor.Value);
+		if ((BorderSpace.Width | BorderSpace.Height) != 0)
+		{
+			if (BackgroundColor is not null && BackgroundColor.Value.A == 255)
+			{
+				var borderRectSize = new Size(DisplayedSize.Width + BorderSpace.Width, DisplayedSize.Height + BorderSpace.Height);
+				sb.FillRectangle(new Rectangle(borderPos, borderRectSize), Color.Black);
+			}
+			else
+			{
+				// TODO: draw color when component background has alpha or component does not have background
+			}
+		}
+
+		if (BackgroundColor is not null) {
+			sb.FillRectangle(new Rectangle(contentPos, DisplayedSize), BackgroundColor.Value);
 		}
 
 		for (int i = 0; i < ChildComponents.Count; i++)
