@@ -15,11 +15,14 @@ public class Label : BaseComponent {
 		var height = DisplayedSize.Height + BorderSpace.Height;
 		var display = new Size(width, height);
 
-		var pos3 = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
-		sb.FillRectangle(new Rectangle(pos3, display), Color.Black);
+		if (BackgroundColor is not null) {
+			var pos3 = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
+			sb.FillRectangle(new Rectangle(pos3, display), Color.Black);
+		}
 
 		var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
-		sb.FillRectangle(new Rectangle(pos, DisplayedSize), Color.Green);
+		if (BackgroundColor is not null)
+			sb.FillRectangle(new Rectangle(pos, DisplayedSize), BackgroundColor.Value);
 
 		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(_TextFontSize);
 		var pos2 = new Vector2(pos.X + MarginalSpace.Left, pos.Y + MarginalSpace.Top);

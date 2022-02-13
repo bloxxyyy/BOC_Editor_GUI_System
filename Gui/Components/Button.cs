@@ -22,7 +22,8 @@ public class Button : BaseComponent, ISelectable {
 		sb.FillRectangle(new Rectangle(pos3, display), Color.Black);
 
 		var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
-		sb.FillRectangle(new Rectangle(pos, DisplayedSize), Color.Blue);
+		if (BackgroundColor is null) BackgroundColor = Color.White;
+			sb.FillRectangle(new Rectangle(pos, DisplayedSize), BackgroundColor.Value);
 
 		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(FontSize);
 		var pos2 = new Vector2(pos.X + MarginalSpace.Left, pos.Y + MarginalSpace.Top);

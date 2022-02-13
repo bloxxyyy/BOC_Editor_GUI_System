@@ -28,20 +28,17 @@ namespace Koko.RunTimeGui
 		#endregion
 
 		#region Component updaters
-		public void Update()
-		{
+		public void Update() {
 			// TODO: Implement or remove function from abstract class parent
 		}
 
-		private int GetColumnWidth(int column)
-        {
+		private int GetColumnWidth(int column) {
 			if (column < 0 || column >= Columns)
 				throw new ArgumentOutOfRangeException($"Column index {column} should be between 0 and {Columns}");
 
 			var maxWidth = 0;
 
-			for (int col = column; col < ChildComponents.Count; col += Columns)
-            {
+			for (int col = column; col < ChildComponents.Count; col += Columns) {
 				if (ChildComponents[col] is not null)
 					maxWidth = Math.Max(maxWidth, ChildComponents[col].DisplayedSize.Width + ChildComponents[col].PaddingHorizontal);
             }
@@ -51,8 +48,7 @@ namespace Koko.RunTimeGui
 
 		private int GetTotalRows() => (int) Math.Ceiling((double)ChildComponents.Count / Columns);
 
-		private int GetRowHeight(int row)
-        {
+		private int GetRowHeight(int row) {
 			int totalRows = GetTotalRows();
 
 			if (row < 0 || row >= totalRows)
@@ -60,8 +56,7 @@ namespace Koko.RunTimeGui
 
 			var maxHeight = 0;
 
-			for (int i = row * Columns; i < (Columns * (row + 1)) && i < ChildComponents.Count; i++)
-			{
+			for (int i = row * Columns; i < (Columns * (row + 1)) && i < ChildComponents.Count; i++) {
 				if (ChildComponents[i] is not null)
 					maxHeight = Math.Max(maxHeight, ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical);
 			}
@@ -69,8 +64,7 @@ namespace Koko.RunTimeGui
 			return maxHeight;
 		}
 
-		public void UpdatePosition(Point newPosition)
-		{
+		public void UpdatePosition(Point newPosition) {
 			Position = newPosition;
 
 			int[] columnWidths = new int[Columns];
@@ -110,10 +104,22 @@ namespace Koko.RunTimeGui
 
 		public override void Init() {
 			// initialize each child component so their sizes are calculated
-			for (int i = 0; i < ChildComponents.Count; i++)
-			{
+			for (int i = 0; i < ChildComponents.Count; i++) {
 				ChildComponents[i].Init();
 			}
+
+			int width = 0;
+			for (int i = 0; i < Columns; i++) {
+				width += GetColumnWidth(i);
+			}
+
+			int totalRows = GetTotalRows();
+			int height = 0;
+			for (int i = 0; i < totalRows; i++) {
+				height += GetRowHeight(i);
+			}
+
+			DisplayedSize = new Size(width, height);
 		}
 
 		/// <summary>
@@ -121,8 +127,20 @@ namespace Koko.RunTimeGui
 		/// </summary>
 		/// <param name="gameTime"></param>
 		public override void Draw(SpriteBatch sb) {
+			var contentPos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
+			var borderPos = new Point(contentPos.X - BorderSpace.Left, contentPos.Y - BorderSpace.Top);
+
+			if ((BorderSpace.Width | BorderSpace.Height) != 0) {
+				if (BackgroundColor is not null && BackgroundColor.Value.A == 255) {
+					var borderRectSize = new Size(DisplayedSize.Width + BorderSpace.Width, DisplayedSize.Height + BorderSpace.Height);
+					sb.FillRectangle(new Rectangle(borderPos, borderRectSize), Color.Black);
+				} else {
+					// TODO: draw color when component background has alpha or component does not have background
+				}
+			}
+
 			if (BackgroundColor is not null) {
-				sb.FillRectangle(new Rectangle(Position, DisplayedSize), BackgroundColor.Value);
+				sb.FillRectangle(new Rectangle(contentPos, DisplayedSize), BackgroundColor.Value);
 			}
 
 			foreach (var c in ChildComponents)

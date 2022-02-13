@@ -46,6 +46,7 @@ public abstract class BaseComponent : IComponent {
 	}
 
 	public Size DisplayedSize { get; set; }
+	public Color? BackgroundColor { get; set; }
 
 	public abstract void Draw(SpriteBatch sb);
 	public abstract void Init();
