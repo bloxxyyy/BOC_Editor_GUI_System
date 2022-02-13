@@ -14,6 +14,7 @@ public class Label : BaseComponent {
 		var width = DisplayedSize.Width + BorderSpace.Width;
 		var height = DisplayedSize.Height + BorderSpace.Height;
 		var display = new Size(width, height);
+
 		var pos3 = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
 		sb.FillRectangle(new Rectangle(pos3, display), Color.Black);
 
@@ -27,8 +28,8 @@ public class Label : BaseComponent {
 
 	public override void Init() {
 		var size = GuiHelper.MeasureString(Text, _TextFontSize);
-		Position = new Point(Position.X, Position.Y);
 
+		// account the inner marginal space (padding between border and text) in displayed size
 		int width = size.Width + MarginalSpace.Width;
 		int height = size.Height + MarginalSpace.Height;
 
