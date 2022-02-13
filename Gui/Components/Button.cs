@@ -34,8 +34,8 @@ public class Button : BaseComponent, ISelectable {
 	/// </summary>
 	public override void Init() {
 		var size = GuiHelper.MeasureString(Text, FontSize);
-		Position = new Point(Position.X, Position.Y);
 
+		// account for the padding of the text from the border in the displayed size
 		int width = size.Width + MarginalSpace.Width;
 		int height = size.Height + MarginalSpace.Height;
 		DisplayedSize = new Size(width, height);

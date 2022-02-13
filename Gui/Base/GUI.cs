@@ -26,12 +26,26 @@ public class GUI : BaseComponent, IParent {
 	}
 
 	public override void Init() {
+		for (int i = 0; i < ChildComponents.Count; i++) {
+			ChildComponents[i].Init();
+		}
+
+		UpdatePosition(Position);
+	}
+
+    public void UpdatePosition(Point newPosition)
+    {
 		int xpos = Position.X + PaddingLeft;
 		int ypos = Position.Y + PaddingTop;
 
-		for (int i = 0; i < ChildComponents.Count; i++) {
-			ChildComponents[i].Position = new Point(xpos, ypos);
-			ChildComponents[i].Init();
+		for (int i = 0; i < ChildComponents.Count; i++)
+		{
+			var childPos = new Point(xpos, ypos);
+			if (ChildComponents[i] is IParent child)
+				child.UpdatePosition(childPos);
+			else
+				ChildComponents[i].Position = childPos;
+
 			ypos += ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical;
 		}
 	}

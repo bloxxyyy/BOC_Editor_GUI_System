@@ -2,9 +2,9 @@
 #r "nuget: NetStandard.Library, 1.6.1"
 #r "nuget: System.Xml.ReaderWriter, 4.3.1"
 #r "nuget: System.Runtime.Serialization.Xml, 4.3.0"
-#r "C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.dll"
 #r "nuget: MonoGame.Framework.DesktopGL, 3.0.8"
 #r "nuget: MonoGame.Extended, 3.8.0"
+#r "../bin/Debug/netcoreapp3.1/Koko.RunTimeGui.dll"
 
 // dotnet tool install -g dotnet-script
 
@@ -12,24 +12,36 @@
 // dotnet script Generator.csx
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Collections;
+using System.Globalization;
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Koko.RunTimeGui;
-using System.Reflection;
+
+
+var projectPath = Directory.GetCurrentDirectory();
 
 /// <summary>
 ///  The file location where your xml files are located.
 /// </summary>
-var xmlFilesLocation = "C:\\Users\\mnnop\\Documents\\BOC\\BOC_Editor\\XML";
+var xmlFilesLocation = projectPath + "\\XML";
 
 /// <summary>
 ///  The file location where your generated files are stored.
 /// </summary>
-var generatedFilesLocation = "C:\\Users\\mnnop\\Documents\\BOC\\BOC_Editor\\Generated";
+var generatedFilesLocation = projectPath + "\\Generated";
 
-if (Directory.Exists(xmlFilesLocation)) {
+if (Directory.Exists(xmlFilesLocation))
+{
     ProcessDirectory(xmlFilesLocation, generatedFilesLocation);
+}
+else
+{
+    throw new ArgumentException($"Path \"{xmlFilesLocation}\" does not exist, please check your current working directory");
 }
 
 /// <summary>
@@ -212,15 +224,29 @@ string Elements(XmlReader reader, IComponent componentType) {
         var background = reader.GetAttribute("BackGround-Color");
         if (background is null) {
             background = "null";
+        } else if (background.StartsWith("#")) {
+            var rx = new Regex(@"^#(?<alpha>[0-9a-f]{2})?(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var groups = rx.Matches(background)[0].Groups;
+            var alpha = byte.Parse(groups[1].Value != "" ? groups[1].Value : "ff", NumberStyles.HexNumber);
+            var red = byte.Parse(groups[2].Value, NumberStyles.HexNumber);
+            var green = byte.Parse(groups[3].Value, NumberStyles.HexNumber);
+            var blue = byte.Parse(groups[4].Value, NumberStyles.HexNumber);
+            background = $"new Color({red}, {green}, {blue}, {alpha})";
         } else {
             background = "Color." + background;
         }
 
-        return "component = new " + reader.Name + "() { Parent = component, Tag = " + tag + ", BorderSpace = new Margin(" + convertedBorder + "), MarginalSpace = new Margin(" + convertedMargin + ") " + ", BackgroundColor = " + background + " };\n";
+        if (componentType is GridPanel)
+        {
+            var columns = GetIntergerValue(reader.GetAttribute("Columns"));
+            columns = (columns == 0) ? 2 : columns;
+            return $"component = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}), BackgroundColor = {background}, Columns = {columns} }};\n";
+        }
+
+        return $"component = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}), BackgroundColor = {background} }};\n";
     }
 
-    return "temp = new " + reader.Name + "() { Parent = component, Tag = " + tag + ", BorderSpace = new Margin(" + convertedBorder + "),  MarginalSpace = new Margin(" + convertedMargin + ") " + " };\n" +
-        "temp.Text = \"";
+    return $"temp = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}) }};\n temp.Text = \"";
    
 }
 

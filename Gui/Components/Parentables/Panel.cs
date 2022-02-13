@@ -12,28 +12,58 @@ public class Panel : BaseComponent, IParent {
 	public override void Draw(SpriteBatch sb) {
 		if (!IsRendering) return;
 
-		if (BackgroundColor is not null) {
+		var contentPos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
+		var borderPos = new Point(contentPos.X - BorderSpace.Left, contentPos.Y - BorderSpace.Top);
 
-			var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
-			sb.FillRectangle(new Rectangle(pos, DisplayedSize), BackgroundColor.Value);
+		if ((BorderSpace.Width | BorderSpace.Height) != 0)
+		{
+			if (BackgroundColor is not null && BackgroundColor.Value.A == 255)
+			{
+				var borderRectSize = new Size(DisplayedSize.Width + BorderSpace.Width, DisplayedSize.Height + BorderSpace.Height);
+				sb.FillRectangle(new Rectangle(borderPos, borderRectSize), Color.Black);
+			}
+			else
+			{
+				// TODO: draw color when component background has alpha or component does not have background
+			}
+		}
+
+		if (BackgroundColor is not null) {
+			sb.FillRectangle(new Rectangle(contentPos, DisplayedSize), BackgroundColor.Value);
 		}
 
 		for (int i = 0; i < ChildComponents.Count; i++)
 			ChildComponents[i].Draw(sb);
 	}
 
-	public override void Init() {
+	public void UpdatePosition(Point newPosition)
+	{
+		Position = newPosition;
 		int xpos = Position.X + PaddingLeft;
 		int ypos = Position.Y + PaddingTop;
 
-		for (int i = 0; i < ChildComponents.Count; i++) {
-			ChildComponents[i].Position = new Point(xpos, ypos);
-			ChildComponents[i].Init();
+		for (int i = 0; i < ChildComponents.Count; i++)
+		{
+			var childPos = new Point(xpos, ypos);
+			if (ChildComponents[i] is IParent child)
+				child.UpdatePosition(childPos);
+			else
+				ChildComponents[i].Position = childPos;
+
 			ypos += ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical;
 		}
+	}
 
-		var height = (ypos - Position.Y) - PaddingTop;
+	public override void Init() {
+		var height = 0;
+
+		for (int i = 0; i < ChildComponents.Count; i++) {
+			ChildComponents[i].Init();
+			height += ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical;
+		}
+
 		DisplayedSize = new Size(GetBiggestPanelWidth(), height);
+		UpdatePosition(Position);
 	}
 
 	public void Update() {
