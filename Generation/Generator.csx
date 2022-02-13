@@ -236,11 +236,17 @@ string Elements(XmlReader reader, IComponent componentType) {
             background = "Color." + background;
         }
 
-        return "component = new " + reader.Name + "() { Parent = component, Tag = " + tag + ", BorderSpace = new Margin(" + convertedBorder + "), MarginalSpace = new Margin(" + convertedMargin + ") " + ", BackgroundColor = " + background + " };\n";
+        if (componentType is GridPanel)
+        {
+            var columns = GetIntergerValue(reader.GetAttribute("Columns"));
+            columns = (columns == 0) ? 2 : columns;
+            return $"component = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}), BackgroundColor = {background}, Columns = {columns} }};\n";
+        }
+
+        return $"component = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}), BackgroundColor = {background} }};\n";
     }
 
-    return "temp = new " + reader.Name + "() { Parent = component, Tag = " + tag + ", BorderSpace = new Margin(" + convertedBorder + "),  MarginalSpace = new Margin(" + convertedMargin + ") " + " };\n" +
-        "temp.Text = \"";
+    return $"temp = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}) }};\n temp.Text = \"";
    
 }
 
