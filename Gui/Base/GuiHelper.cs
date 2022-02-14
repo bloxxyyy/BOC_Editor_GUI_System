@@ -1,9 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Apos.Input;
+using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 
 namespace Koko.RunTimeGui;
 
 public static class GuiHelper {
+
+    public static Point Mouse => InputHelper.NewMouse.Position;
 
     /// <summary>
     /// Taken from Apos.Gui.

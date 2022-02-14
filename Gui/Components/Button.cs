@@ -2,14 +2,24 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using System.Diagnostics;
 
 namespace Koko.RunTimeGui;
 
 public class Button : BaseComponent, ISelectable {
-	public bool IsSelectable { get; set; }
+	public bool IsSelectable { get; set; } = true;
 
 	public int FontSize { get; set; } = 16;
 	public Action OnClick { get; set; }
+
+	int c = 0;
+	public override void Update() {
+		if (IsSelectable /*&& Default.MouseInteraction.Pressed() */&& Rectangle.Contains(GuiHelper.Mouse)) {
+			c++;
+			OnClick?.Invoke();
+			Debug.WriteLine($"bla: {c}");
+		}
+	}
 
 	/// <summary>
 	/// To draw Text to the Window.

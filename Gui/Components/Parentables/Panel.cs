@@ -42,13 +42,10 @@ public class Panel : BaseComponent, IParent {
 		int xpos = Position.X + PaddingLeft;
 		int ypos = Position.Y + PaddingTop;
 
-		for (int i = 0; i < ChildComponents.Count; i++)
-		{
+		for (int i = 0; i < ChildComponents.Count; i++) {
 			var childPos = new Point(xpos, ypos);
-			if (ChildComponents[i] is IParent child)
-				child.UpdatePosition(childPos);
-			else
-				ChildComponents[i].Position = childPos;
+			if (ChildComponents[i] is IParent child) child.UpdatePosition(childPos);
+			else ChildComponents[i].Position = childPos;
 
 			ypos += ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical;
 		}
@@ -66,8 +63,10 @@ public class Panel : BaseComponent, IParent {
 		UpdatePosition(Position);
 	}
 
-	public void Update() {
+	public override void Update() {
 		if (!IsRendering) return;
+		for (int i = 0; i < ChildComponents.Count; i++)
+			ChildComponents[i].Update();
 	}
 
 	private int GetBiggestPanelWidth() {

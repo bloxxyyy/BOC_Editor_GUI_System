@@ -29,6 +29,10 @@ public class Label : BaseComponent {
 		sb.DrawString(font18, Text, pos2, _FontCol);
 	}
 
+	public override void Update() {
+		
+	}
+
 	public override void Init() {
 		var size = GuiHelper.MeasureString(Text, _TextFontSize);
 

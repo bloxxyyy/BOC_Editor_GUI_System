@@ -28,8 +28,9 @@ namespace Koko.RunTimeGui
 		#endregion
 
 		#region Component updaters
-		public void Update() {
-			// TODO: Implement or remove function from abstract class parent
+		public override void Update() {
+			for (int i = 0; i < ChildComponents.Count; i++)
+				ChildComponents[i].Update();
 		}
 
 		private int GetColumnWidth(int column) {

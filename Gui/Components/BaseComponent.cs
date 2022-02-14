@@ -45,9 +45,15 @@ public abstract class BaseComponent : IComponent {
 		private set { }
 	}
 
+	public Rectangle Rectangle {
+		get => new(Position.X + PaddingLeft, Position.Y + PaddingTop, DisplayedSize.Width, DisplayedSize.Height);
+		private set { }
+	}
+
 	public Size DisplayedSize { get; set; }
 	public Color? BackgroundColor { get; set; }
 
 	public abstract void Draw(SpriteBatch sb);
 	public abstract void Init();
+	public abstract void Update();
 }
