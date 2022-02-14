@@ -8,9 +8,6 @@
 
 // dotnet tool install -g dotnet-script
 
-// cd C:\Users\mnnop\Documents\BOC\Koko.RunTimeGui\Generation
-// dotnet script Generator.csx
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -21,7 +18,7 @@ using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Koko.RunTimeGui;
-
+using System.Linq;
 
 var projectPath = Directory.GetCurrentDirectory();
 
@@ -35,109 +32,52 @@ var xmlFilesLocation = projectPath + "\\XML";
 /// </summary>
 var generatedFilesLocation = projectPath + "\\Generated";
 
-if (Directory.Exists(xmlFilesLocation))
-{
-    ProcessDirectory(xmlFilesLocation, generatedFilesLocation);
-}
-else
-{
+var longName = "Koko.RunTimeGui, Version = 1.0.0.0, Culture = neutral, PublicKeyToken = null";
+var asm = Assembly.Load(longName);
+
+if (!Directory.Exists(xmlFilesLocation)) 
     throw new ArgumentException($"Path \"{xmlFilesLocation}\" does not exist, please check your current working directory");
-}
+
+var files = GetAllXmlFiles(xmlFilesLocation);
+
+files.ForEach(xmlFileLocation => {
+    var fileName = "Gen_" + System.IO.Path.GetFileNameWithoutExtension(xmlFileLocation).Replace(" ", "_");
+    var generatedfilesLocation = generatedFilesLocation + "\\" + fileName + ".cs";
+    CreateNewFile(generatedfilesLocation, fileName, xmlFileLocation);
+});
 
 /// <summary>
 /// To check for all xml files in directory plus sub directories.
 /// </summary>
 /// <param name="targetDirectory"></param>
-public void ProcessDirectory(string targetDirectory, string generatedFilesLocation) {
+private List<String> GetAllXmlFiles(string targetDirectory) {
+    var files = new List<String>();
     foreach (string fileName in Directory.EnumerateFiles(targetDirectory, "*.xml", SearchOption.AllDirectories)) {
-        Console.WriteLine("");
-        Console.WriteLine("-----------------------------------------------------------------------------");
-        Console.WriteLine("");
-        ProcessFile(fileName, generatedFilesLocation);
+        files.Add(fileName);
     }
+    return files;
 }
 
-public void ProcessFile(string path, string generatedFilesLocation) {
-    var fileName = new DirectoryInfo(path).Name;
-    Console.WriteLine("Processed file '{0}'.", path);
-    Console.WriteLine("Found file '{0}'.", fileName);
-    fileName = System.IO.Path.GetFileNameWithoutExtension(path);
-
-    Console.WriteLine("Converting file name: '{0}'...", fileName);
-    fileName = "Gen_" + fileName.Replace(" ", "_");
-    Console.WriteLine("Converted to: '{0}'.", fileName);
-
-    Console.WriteLine("Check if generation file exists...");
-    var check = CheckIfGeneratedFileExists(fileName, generatedFilesLocation);
-
-    var cSharpFile = check;
-    Console.WriteLine("Creating new file: " + cSharpFile);
-
-    CreateNewFile(cSharpFile, fileName, path);
-}
-
-public void CreateNewFile(string fileName, string csharpName, string xmlpath) {
-    var path = fileName;
+private void CreateNewFile(string GeneratedFileLocation, string filename, string xmlFileLocation) {
     try {
-        using (FileStream fs = File.Create(path)) {
-            GenerateFileInformation(fs, csharpName, xmlpath);
+        using (FileStream fs = File.Create(GeneratedFileLocation)) {
+            GenerateFileInformation(fs, filename, xmlFileLocation);
         }
     } catch (Exception ex) {
         Console.WriteLine(ex.ToString());
     }
 }
 
-public string CheckIfGeneratedFileExists(string fileName, string generatedFilesLocation) {
-    Console.WriteLine("Looking in Folder '{0}'...", generatedFilesLocation);
-
-    var path = generatedFilesLocation + "\\" + fileName + ".cs";
-
-    if (File.Exists(path)) {
-        Console.WriteLine(path + " exists... Re-generate anyways.");
-    }
-
-    return path;
-}
-
-private Type FindType(string qualifiedTypeName) {
-    Type t = Type.GetType(qualifiedTypeName);
-
-    if (t != null) {
-        return t;
-    } else { // TODO dont go through all assemblies. Just get my own.
-        foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) {
-            /*Console.WriteLine("Assembly:" + asm);*/
-            t = asm.GetType(qualifiedTypeName);
-            if (t != null)
-                return t;
-        }
-        return null;
-    }
-}
-
-private Type GetType(string name) {
-    var text = "Koko.RunTimeGui." + name;
-    Console.WriteLine("to Check: " + text);
-
-    var type = FindType("Koko.RunTimeGui." + name);
-    Console.WriteLine("type: " + type);
-
-    return type;
-}
-
-public void GenerateFileInformation(FileStream fs, string name, string xmlPath) {
+public void GenerateFileInformation(FileStream fs, string filename, string xmlPath) {
     XmlReaderSettings settings = new XmlReaderSettings();
     settings.IgnoreWhitespace = true;
 
-    Console.WriteLine("Checking xml for path: " + xmlPath);
-
     using (var fileStream = File.OpenText(xmlPath)) {
-
         using (XmlReader reader = XmlReader.Create(fileStream, settings)) {
 
             var currentParent = "GUI.Gui";
 
-            var start = "using Microsoft.Xna.Framework;\nusing Koko.RunTimeGui;\nusing Koko.RunTimeGui.Gui.Initable_Components;\n\nnamespace Koko.Generated { \npublic class " + name + " : IInitable { \npublic void Init() {\n";
+            var start = "using Microsoft.Xna.Framework;\nusing Koko.RunTimeGui;\nusing Koko.RunTimeGui.Gui.Initable_Components;\n\nnamespace Koko.Generated { \npublic class " + filename + " : IInitable { \npublic void Init() {\n";
             var end = "}\n}\n}\n";
             var writestart = new UTF8Encoding(true).GetBytes(start);
             var writeend = new UTF8Encoding(true).GetBytes(end);
@@ -149,16 +89,11 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
                 switch (reader.NodeType) {
                     case XmlNodeType.Element:
                         try {
-                            var instance = Activator.CreateInstance(GetType(reader.Name)) as IComponent;
-
-                            Console.WriteLine($"Start Element: {reader.Name}. Has Attributes? : {reader.HasAttributes}");
+                            var instance = Activator.CreateInstance(asm.GetType("Koko.RunTimeGui." + reader.Name)) as IComponent;
                             line += Elements(reader, instance);
-
                         } catch (System.Exception) {
-                            Console.WriteLine("Couldn't find XML TYPE: " + reader.Name + " Create Component first!");
 							throw;
 						}
-
                         break;
 
                     case XmlNodeType.Text:
@@ -180,9 +115,9 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
                         }
 
                         try {
-                            var instance = Activator.CreateInstance(GetType(reader.Name)) as IComponent;
+                            var type = asm.GetType("Koko.RunTimeGui." + reader.Name);
+                            var instance = Activator.CreateInstance(type) as IComponent;
 
-                            Console.WriteLine($"End Element: {reader.Name}");
                             line += EndTag(reader, instance);
 
                         } catch (System.Exception) {
@@ -209,60 +144,48 @@ public void GenerateFileInformation(FileStream fs, string name, string xmlPath) 
 private string Text = "";
 string Elements(XmlReader reader, IComponent componentType) {
 
-    if (reader.Name == "GUI") { // special case.
-        return "IParent component = GUI.Gui;\nBaseComponent temp;\n";
-    }
+    var setparentToGui = "IParent component = GUI.Gui;";
+    var createTempComponent = "BaseComponent temp;";
 
-    var tag = "\"" + reader.GetAttribute("Tag") + "\"";
-    var margin = reader.GetAttribute("Margin");
-    var border = reader.GetAttribute("Border");
-    int convertedMargin = GetIntergerValue(margin);
-    int convertedBorder = GetIntergerValue(border);
+    if (reader.Name == "GUI") // special case.
+        return $"{setparentToGui}\n{createTempComponent}\n";
+
+    var tagVal = "\"" + reader.GetAttribute("Tag") + "\"";
+    var marginVal = GetIntergerValue(reader.GetAttribute("Margin"));
+    var borderVal = GetIntergerValue(reader.GetAttribute("Border"));
+
+    var setnew = $"new {reader.Name}() {{ Parent = component";
+    var tag = $"Tag = {tagVal}";
+    var margin = $"MarginalSpace = new Margin({marginVal})";
+    var border = $"BorderSpace = new Margin({borderVal})";
 
     if (componentType is IParent) {
-
-        var background = reader.GetAttribute("BackGround-Color");
-        if (background is null) {
-            background = "null";
-        } else if (background.StartsWith("#")) {
-            var rx = new Regex(@"^#(?<alpha>[0-9a-f]{2})?(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var groups = rx.Matches(background)[0].Groups;
-            var alpha = byte.Parse(groups[1].Value != "" ? groups[1].Value : "ff", NumberStyles.HexNumber);
-            var red = byte.Parse(groups[2].Value, NumberStyles.HexNumber);
-            var green = byte.Parse(groups[3].Value, NumberStyles.HexNumber);
-            var blue = byte.Parse(groups[4].Value, NumberStyles.HexNumber);
-            background = $"new Color({red}, {green}, {blue}, {alpha})";
-        } else {
-            background = "Color." + background;
-        }
+        var backgroundColor = $"BackgroundColor = {GetBackgroundVal(reader)}";
+        var columns = $"Columns = {GetColumnsVal(reader)}";
 
         if (componentType is GridPanel)
-        {
-            var columns = GetIntergerValue(reader.GetAttribute("Columns"));
-            columns = (columns == 0) ? 2 : columns;
-            return $"component = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}), BackgroundColor = {background}, Columns = {columns} }};\n";
-        }
+            return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {columns} }};\n";
 
-        return $"component = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}), BackgroundColor = {background} }};\n";
+        return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor} }};\n";
     }
 
-    return $"temp = new {reader.Name}() {{ Parent = component, Tag = {tag}, BorderSpace = new Margin({convertedBorder}), MarginalSpace = new Margin({convertedMargin}) }};\n temp.Text = \"";
+    return $"temp = {setnew}, {tag}, {border}, {margin} }};\n temp.Text = \"";
    
 }
 
-string EndTag(XmlReader reader, IComponent componentType) {
-    if (reader.Name == "GUI") { // special case.
-        return "";
-    }
+private string EndTag(XmlReader reader, IComponent componentType) {
+    if (reader.Name == "GUI") return "";
 
-    if (componentType is IParent) {
-        return "((BaseComponent)component).Parent.ChildComponents.Add((BaseComponent)component);\ncomponent = ((BaseComponent)component).Parent;\n";
-    }
+    var addComponentToParent = "((BaseComponent)component).Parent.ChildComponents.Add((BaseComponent)component);";
+    var setComponent = "component = ((BaseComponent)component).Parent;";
+
+    if (componentType is IParent) // besides GUI
+        return $"{addComponentToParent}\n{setComponent}\n";
 
     return "";
 }
 
-int GetIntergerValue(string margin) {
+private int GetIntergerValue(string margin) {
     if (margin != null) {
         try {
             return Int32.Parse(margin);
@@ -271,4 +194,26 @@ int GetIntergerValue(string margin) {
         }
     }
     return 0;
+}
+
+private int GetColumnsVal(XmlReader reader) {
+    var columnsVal = GetIntergerValue(reader.GetAttribute("Columns"));
+    return (columnsVal == 0) ? 2 : columnsVal;
+}
+
+private string GetBackgroundVal(XmlReader reader) {
+    var background = reader.GetAttribute("BackGround-Color");
+    if (background is null) {
+        return "null";
+    } else if (background.StartsWith("#")) {
+        var rx = new Regex(@"^#(?<alpha>[0-9a-f]{2})?(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var groups = rx.Matches(background)[0].Groups;
+        var alpha = byte.Parse(groups[1].Value != "" ? groups[1].Value : "ff", NumberStyles.HexNumber);
+        var red = byte.Parse(groups[2].Value, NumberStyles.HexNumber);
+        var green = byte.Parse(groups[3].Value, NumberStyles.HexNumber);
+        var blue = byte.Parse(groups[4].Value, NumberStyles.HexNumber);
+        return $"new Color({red}, {green}, {blue}, {alpha})";
+    } else {
+        return "Color." + background;
+    }
 }
