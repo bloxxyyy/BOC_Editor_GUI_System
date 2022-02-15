@@ -12,16 +12,15 @@ public class Button : BaseComponent, ISelectable {
 	public int FontSize { get; set; } = 16;
 	public Action OnClick { get; set; }
 
-	int c = 0;
+	bool _clicked = false;
 	public override void Update() {
-		if (IsSelectable && Default.MouseInteraction.Pressed() && Rectangle.Contains(GuiHelper.Mouse)) {
+		if (Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed()) {
+			_clicked = true;
+		}
 
-			Debug.WriteLine(GuiHelper.Mouse);
-			Debug.WriteLine(Rectangle);
-
-			c++;
-			//OnClick?.Invoke();
-			Debug.WriteLine($"bla: {c}");
+		if (IsSelectable && _clicked) {
+			OnClick?.Invoke();
+			_clicked = false;
 		}
 	}
 
@@ -42,8 +41,6 @@ public class Button : BaseComponent, ISelectable {
 		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(FontSize);
 		var pos2 = new Vector2(pos.X + MarginalSpace.Left, pos.Y + MarginalSpace.Top);
 		sb.DrawString(font18, Text, pos2, Color.Black);
-
-		sb.FillRectangle(Rectangle, Color.Orange);
 	}
 
 	/// <summary>
@@ -58,3 +55,4 @@ public class Button : BaseComponent, ISelectable {
 		DisplayedSize = new Size(width, height);
 	}
 }
+
