@@ -15,22 +15,17 @@ public class Panel : BaseComponent, IParent {
 		var contentPos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
 		var borderPos = new Point(contentPos.X - BorderSpace.Left, contentPos.Y - BorderSpace.Top);
 
-		if ((BorderSpace.Width | BorderSpace.Height) != 0)
-		{
-			if (BackgroundColor is not null && BackgroundColor.Value.A == 255)
-			{
+		if ((BorderSpace.Width | BorderSpace.Height) != 0) {
+			if (BackgroundColor is not null && BackgroundColor.Value.A == 255) {
 				var borderRectSize = new Size(DisplayedSize.Width + BorderSpace.Width, DisplayedSize.Height + BorderSpace.Height);
 				sb.FillRectangle(new Rectangle(borderPos, borderRectSize), Color.Black);
-			}
-			else
-			{
+			} else {
 				// TODO: draw color when component background has alpha or component does not have background
 			}
 		}
 
-		if (BackgroundColor is not null) {
+		if (BackgroundColor is not null)
 			sb.FillRectangle(new Rectangle(contentPos, DisplayedSize), BackgroundColor.Value);
-		}
 
 		for (int i = 0; i < ChildComponents.Count; i++)
 			ChildComponents[i].Draw(sb);

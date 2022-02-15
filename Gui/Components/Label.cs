@@ -39,7 +39,6 @@ public class Label : BaseComponent {
 		// account the inner marginal space (padding between border and text) in displayed size
 		int width = size.Width + MarginalSpace.Width;
 		int height = size.Height + MarginalSpace.Height;
-
 		DisplayedSize = new Size(width, height);
 	}
 }

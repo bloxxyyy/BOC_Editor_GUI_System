@@ -6,16 +6,23 @@ namespace Koko.RunTimeGui;
 
 public static class GuiHelper {
 
-    public static Point Mouse => InputHelper.NewMouse.Position;
+    public static OrthographicCamera UICamera { get; set; }
 
-    /// <summary>
-    /// Taken from Apos.Gui.
-    /// Measures text using a font with a given size. The line height is the same no matter the text content.
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="size"></param>
-    /// <returns></returns>
-    public static Size MeasureString(string text, int size) {
+    public static Vector2 ScreenToWorldSpace(in Point point) {
+        Matrix invertedMatrix = Matrix.Invert(UICamera.GetViewMatrix());
+        return Vector2.Transform(point.ToVector2(), invertedMatrix);
+    }
+
+    public static Point Mouse => ScreenToWorldSpace(InputHelper.NewMouse.Position).ToPoint();
+
+	/// <summary>
+	/// Taken from Apos.Gui.
+	/// Measures text using a font with a given size. The line height is the same no matter the text content.
+	/// </summary>
+	/// <param name="text"></param>
+	/// <param name="size"></param>
+	/// <returns></returns>
+	public static Size MeasureString(string text, int size) {
         var font = FontHelper.GetFont(size);
         return new Size((int)font.MeasureString(text).X, font.FontSize * CountLines(text));
     }
