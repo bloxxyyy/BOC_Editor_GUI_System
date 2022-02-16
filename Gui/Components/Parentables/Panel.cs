@@ -9,7 +9,7 @@ public class Panel : BaseComponent, IParent {
 	public bool IsRendering { get; set; } = true;
 	public List<BaseComponent> ChildComponents { get; set; } = new();
 	public Color? BackgroundColor { get; set; } = null;
-	public bool IsDraggable { get; set; } = true;
+	public bool IsDraggable { get; set; } = false;
 	public int DraggerHeight { get; set; } = 20;
 
 	public override void Draw(SpriteBatch sb) {
