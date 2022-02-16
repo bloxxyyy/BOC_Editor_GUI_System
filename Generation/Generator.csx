@@ -154,18 +154,23 @@ string Elements(XmlReader reader, IComponent componentType) {
     var tagVal = "\"" + reader.GetAttribute("Tag") + "\"";
     var marginVal = GetIntergerValue(reader.GetAttribute("Margin"));
     var borderVal = GetIntergerValue(reader.GetAttribute("Border"));
+    var isDraggableValue = GetBooleanAttribute(reader, "IsDraggable", false);
 
     var setnew = $"new {reader.Name}() {{ Parent = component";
     var tag = $"Tag = {tagVal}";
     var margin = $"MarginalSpace = new Margin({marginVal})";
     var border = $"BorderSpace = new Margin({borderVal})";
+    var isDraggable = $"IsDraggable = {isDraggableValue.ToString().ToLower()}";
 
     if (componentType is IParent) {
         var backgroundColor = $"BackgroundColor = {GetBackgroundVal(reader)}";
         var columns = $"Columns = {GetColumnsVal(reader)}";
 
         if (componentType is GridPanel)
-            return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {columns} }};\n";
+            return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {columns}, {isDraggable} }};\n";
+
+        if (componentType is IParent)
+            return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {isDraggable} }};\n";
 
         return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor} }};\n";
     }
@@ -217,4 +222,19 @@ private string GetBackgroundVal(XmlReader reader) {
     } else {
         return "Color." + background;
     }
+}
+
+private bool GetBooleanAttribute(XmlReader reader, string attribute, bool defaultValue)
+{
+    var value = reader.GetAttribute(attribute);
+    if (value is null)
+        return defaultValue;
+
+    value = value.ToLower();
+    if (value == "yes" || value == "true")
+        return true;
+    if (value == "no" || value == "false" || value == "0")
+        return false;
+
+    throw new ArgumentOutOfRangeException($"Don't know what to do with value '{value}' for boolean attribute");
 }

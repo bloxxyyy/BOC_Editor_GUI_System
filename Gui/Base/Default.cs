@@ -60,5 +60,7 @@ namespace Koko.RunTimeGui {
                 new Track.GamePadCondition(GamePadButton.Back, 0),
                 new Track.MouseCondition(MouseButton.XButton2)
             );
+        public static ICondition F12Press { get; set; } =
+            new Track.KeyboardCondition(Keys.F12);
     }
 }
