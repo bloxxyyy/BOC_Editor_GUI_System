@@ -8,25 +8,21 @@ namespace Koko.RunTimeGui;
 
 public class Button : BaseComponent, ISelectable {
 	public bool IsSelectable { get; set; } = true;
-
 	public int FontSize { get; set; } = 16;
 	public Action OnClick { get; set; }
 
-	Color? borderColor = Color.SlateGray;
-	Color? tempBackgroundColor;
-	Color? tempBorderColor;
-	public override void Update() {
-		borderColor = tempBorderColor;
+	private bool IsHeld = false;
 
-		if (!Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed(false)) {
-			BackgroundColor = tempBackgroundColor;
+	private Color? _bgColor { get => IsHeld ? Color.Gray : BackgroundColor; }
+	private Color _borderColor { get => IsHeld ? Color.SlateGray : Color.Black; }
+
+	public override void Update() {
+		if (Default.MouseInteraction.Released(false)) {
+			IsHeld = false;
 		}
 
 		if (Rectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed(false)) {
-			tempBackgroundColor = BackgroundColor;
-			BackgroundColor = Color.Gray;
-			tempBorderColor = borderColor;
-			borderColor = Color.Black;
+			IsHeld = true;
 			OnClick?.Invoke();
 		}
 	}
@@ -35,20 +31,27 @@ public class Button : BaseComponent, ISelectable {
 	/// To draw Text to the Window.
 	/// </summary>
 	public override void Draw(SpriteBatch sb) {
+		// draw border
 		var width = DisplayedSize.Width + BorderSpace.Width;
 		var height = DisplayedSize.Height + BorderSpace.Height;
 		var display = new Size(width, height);
-		var pos3 = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
-		if (borderColor is null) borderColor = Color.SlateGray;
-		sb.FillRectangle(new Rectangle(pos3, display), borderColor.Value);
+		var borderPos = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
 
-		var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
-		if (BackgroundColor is null) BackgroundColor = Color.White;
-			sb.FillRectangle(new Rectangle(pos, DisplayedSize), BackgroundColor.Value);
+		sb.FillRectangle(new Rectangle(borderPos, display), _borderColor);
 
+		// draw button background
+		var backgroundPos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
+
+		if (BackgroundColor is null)
+			BackgroundColor = Color.White;
+
+		if (_bgColor is not null)
+			sb.FillRectangle(new Rectangle(backgroundPos, DisplayedSize), _bgColor.Value);
+
+		// draw text
 		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(FontSize);
-		var pos2 = new Vector2(pos.X + MarginalSpace.Left, pos.Y + MarginalSpace.Top);
-		sb.DrawString(font18, Text, pos2, Color.Black);
+		var textPos = new Vector2(backgroundPos.X + MarginalSpace.Left, backgroundPos.Y + MarginalSpace.Top);
+		sb.DrawString(font18, Text, textPos, Color.Black);
 	}
 
 	/// <summary>
