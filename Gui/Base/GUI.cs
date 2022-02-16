@@ -12,6 +12,8 @@ public class GUI : BaseComponent, IParent {
 	public List<BaseComponent> ChildComponents { get; set; } = new();
 	public Color? BackgroundColor { get; set; } = null;
 	public Game GameInstance { get; set; }
+	public bool IsDragable { get; set; } = false;
+	public int DraggerHeight { get; set; } = 0;
 
 	public override void Update() {
 		if (!IsRendering) return;

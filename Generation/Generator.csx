@@ -89,6 +89,7 @@ public void GenerateFileInformation(FileStream fs, string filename, string xmlPa
                 switch (reader.NodeType) {
                     case XmlNodeType.Element:
                         try {
+                            Debug.WriteLine(reader.Name); // some weird bug sometimes where it cant be found.
                             var instance = Activator.CreateInstance(asm.GetType("Koko.RunTimeGui." + reader.Name)) as IComponent;
                             line += Elements(reader, instance);
                         } catch (System.Exception) {

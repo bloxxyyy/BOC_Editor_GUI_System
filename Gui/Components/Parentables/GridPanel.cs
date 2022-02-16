@@ -12,6 +12,16 @@ namespace Koko.RunTimeGui
 		#region Properties
 
 		/// <summary>
+		/// Information on if this panel can be dragged.
+		/// </summary>
+		public bool IsDragable { get; set; }
+
+		/// <summary>
+		/// The height of the dragPanel
+		/// </summary>
+		public int DraggerHeight { get; set; } = 20;
+
+		/// <summary>
 		/// The amount of components that should be put next to each other.
 		/// </summary>
 		public int Columns { get; set; } = 2;
