@@ -31,7 +31,7 @@ namespace Koko.RunTimeGui
 		/// </summary>
 		protected int _nextChildIndex = 0;
 
-		public Color? BackgroundColor { get; set; } = null;
+		public new Color? BackgroundColor { get; set; } = null;
 		public bool IsRendering { get; set; } = true;
 		public List<BaseComponent> ChildComponents { get; set; } = new();
 

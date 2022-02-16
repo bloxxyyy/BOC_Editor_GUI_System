@@ -7,9 +7,9 @@ namespace Koko.RunTimeGui;
 
 public class Checkbox : BaseComponent, ISelectable
 {
-	private int _TextFontSize { get; set; } = 16;
-	private Size _CheckboxSize { get => new Size(_TextFontSize, _TextFontSize); }
-	private Color _FontCol { get; set; } = Color.Black;
+	private int TextFontSize { get; set; } = 16;
+	private Size CheckboxSize { get => new(TextFontSize, TextFontSize); }
+	private Color FontCol { get; set; } = Color.Black;
 	public bool IsSelectable { get; set; } = true;
 	public bool IsChecked { get; private set; }
 	public Action OnClick { get; set; }
@@ -38,8 +38,8 @@ public class Checkbox : BaseComponent, ISelectable
 		var checkboxBorderRect = new RectangleF(
 			backgroundPos.X + MarginalSpace.Left,
 			backgroundPos.Y + MarginalSpace.Top,
-			_CheckboxSize.Width,
-			_CheckboxSize.Height
+			CheckboxSize.Width,
+			CheckboxSize.Height
 		);
 		var checkboxFillerRect = new RectangleF(
 			checkboxBorderRect.X + 1,
@@ -60,9 +60,9 @@ public class Checkbox : BaseComponent, ISelectable
         }
 
 		// draw label
-		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(_TextFontSize);
+		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(TextFontSize);
 		var textPos = new Vector2(checkboxBorderRect.X + checkboxBorderRect.Width + MarginalSpace.Left * 2, checkboxBorderRect.Y);
-		sb.DrawString(font18, Text, textPos, _FontCol);
+		sb.DrawString(font18, Text, textPos, FontCol);
 	}
 
 	public override void Update()
@@ -79,10 +79,10 @@ public class Checkbox : BaseComponent, ISelectable
 
 	public override void Init()
 	{
-		var textCalculatedSize = GuiHelper.MeasureString(Text, _TextFontSize);
+		var textCalculatedSize = GuiHelper.MeasureString(Text, TextFontSize);
 
 		// account the inner marginal space (padding between border, checkbox, and label) in displayed size
-		int width = textCalculatedSize.Width + MarginalSpace.Left + MarginalSpace.Width + _CheckboxSize.Width;
+		int width = textCalculatedSize.Width + MarginalSpace.Left + MarginalSpace.Width + CheckboxSize.Width;
 		int height = textCalculatedSize.Height + MarginalSpace.Height;
 
 		DisplayedSize = new Size(width, height);

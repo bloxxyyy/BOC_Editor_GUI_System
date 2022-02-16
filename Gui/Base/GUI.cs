@@ -13,7 +13,7 @@ public class GUI : BaseComponent, IParent {
 
 	public bool IsRendering { get; set; } = true;
 	public List<BaseComponent> ChildComponents { get; set; } = new();
-	public Color? BackgroundColor { get; set; } = null;
+	public new Color? BackgroundColor { get; set; } = null;
 	public Game GameInstance { get; set; }
 	public bool IsDraggable { get; set; } = false;
 	public int DraggerHeight { get; set; } = 0;
