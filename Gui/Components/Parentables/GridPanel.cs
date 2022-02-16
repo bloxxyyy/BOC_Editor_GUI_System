@@ -14,7 +14,7 @@ namespace Koko.RunTimeGui
 		/// <summary>
 		/// Information on if this panel can be dragged.
 		/// </summary>
-		public bool IsDragable { get; set; }
+		public bool IsDraggable { get; set; }
 
 		/// <summary>
 		/// The height of the dragPanel

@@ -9,7 +9,7 @@ public class Panel : BaseComponent, IParent {
 	public bool IsRendering { get; set; } = true;
 	public List<BaseComponent> ChildComponents { get; set; } = new();
 	public Color? BackgroundColor { get; set; } = null;
-	public bool IsDragable { get; set; } = true;
+	public bool IsDraggable { get; set; } = true;
 	public int DraggerHeight { get; set; } = 20;
 
 	public override void Draw(SpriteBatch sb) {
@@ -30,7 +30,7 @@ public class Panel : BaseComponent, IParent {
 		if (BackgroundColor is not null)
 			sb.FillRectangle(new Rectangle(contentPos, DisplayedSize), BackgroundColor.Value);
 
-		if (IsDragable) {
+		if (IsDraggable) {
 			var posY = contentPos.Y + DisplayedSize.Height - DraggerHeight;
 			var point = new Point(contentPos.X + 5, posY + 5);
 			var size = new Size(DisplayedSize.Width - 10, DraggerHeight - 10);
@@ -63,7 +63,7 @@ public class Panel : BaseComponent, IParent {
 			height += ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical;
 		}
 
-		if (IsDragable)
+		if (IsDraggable)
 			height += DraggerHeight;
 
 		DisplayedSize = new Size(GetBiggestPanelWidth(), height);
@@ -78,22 +78,24 @@ public class Panel : BaseComponent, IParent {
 		for (int i = 0; i < ChildComponents.Count; i++)
 			ChildComponents[i].Update();
 
-		if (Default.MouseInteraction.Released()) isHeld = false;
+		if (Default.MouseInteraction.Released(false)) isHeld = false;
 
-		if (Default.MouseInteraction.Held() && IsDragable) {
-			var contentPos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
-			var posY = contentPos.Y + DisplayedSize.Height - DraggerHeight;
-			var point = new Point(contentPos.X + 5, posY + 5);
-			var size = new Size(DisplayedSize.Width - 10, DraggerHeight - 10);
-			var rect = new Rectangle(point, size);
+		if (IsDraggable && Default.MouseInteraction.Pressed(false))
+		{
+			var handleRect = new Rectangle(
+				new Point(Rectangle.Left, Rectangle.Bottom - DraggerHeight),
+				new Size(Rectangle.Width, DraggerHeight)
+			);
 
-			if (rect.Contains(GuiHelper.Mouse)) {
-				if (!isHeld) offset = GuiHelper.Mouse - Position;
+			if (handleRect.Contains(GuiHelper.Mouse))
+			{
+				offset = GuiHelper.Mouse - Position;
 				isHeld = true;
 			}
-
-			if (isHeld) UpdatePosition(GuiHelper.Mouse - offset);
 		}
+
+		if (Default.MouseInteraction.Held(false) && IsDraggable && isHeld)
+			UpdatePosition(GuiHelper.Mouse - offset);
 	}
 
 	private int GetBiggestPanelWidth() {
