@@ -18,11 +18,11 @@ public class Button : BaseComponent, ISelectable {
 	public override void Update() {
 		borderColor = tempBorderColor;
 
-		if (!Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed()) {
+		if (!Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed(false)) {
 			BackgroundColor = tempBackgroundColor;
 		}
 
-		if (Rectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed()) {
+		if (Rectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed(false)) {
 			tempBackgroundColor = BackgroundColor;
 			BackgroundColor = Color.Gray;
 			tempBorderColor = borderColor;
