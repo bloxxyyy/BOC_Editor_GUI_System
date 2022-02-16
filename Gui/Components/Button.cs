@@ -12,15 +12,22 @@ public class Button : BaseComponent, ISelectable {
 	public int FontSize { get; set; } = 16;
 	public Action OnClick { get; set; }
 
-	bool _clicked = false;
+	Color? borderColor = Color.SlateGray;
+	Color? tempBackgroundColor;
+	Color? tempBorderColor;
 	public override void Update() {
-		if (Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed()) {
-			_clicked = true;
+		borderColor = tempBorderColor;
+
+		if (!Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed()) {
+			BackgroundColor = tempBackgroundColor;
 		}
 
-		if (IsSelectable && _clicked) {
+		if (Rectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed()) {
+			tempBackgroundColor = BackgroundColor;
+			BackgroundColor = Color.Gray;
+			tempBorderColor = borderColor;
+			borderColor = Color.Black;
 			OnClick?.Invoke();
-			_clicked = false;
 		}
 	}
 
@@ -32,7 +39,8 @@ public class Button : BaseComponent, ISelectable {
 		var height = DisplayedSize.Height + BorderSpace.Height;
 		var display = new Size(width, height);
 		var pos3 = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
-		sb.FillRectangle(new Rectangle(pos3, display), Color.Black);
+		if (borderColor is null) borderColor = Color.SlateGray;
+		sb.FillRectangle(new Rectangle(pos3, display), borderColor.Value);
 
 		var pos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
 		if (BackgroundColor is null) BackgroundColor = Color.White;
