@@ -162,6 +162,8 @@ string Elements(XmlReader reader, IComponent componentType) {
     var border = $"BorderSpace = new Margin({borderVal})";
     var isDraggable = $"IsDraggable = {isDraggableValue.ToString().ToLower()}";
 
+    //if (componentType is IChooseable<ISelectable>) return $"component = {setnew}, {tag} }};\n";
+
     if (componentType is IParent) {
         var backgroundColor = $"BackgroundColor = {GetBackgroundVal(reader)}";
         var columns = $"Columns = {GetColumnsVal(reader)}";
@@ -184,6 +186,11 @@ private string EndTag(XmlReader reader, IComponent componentType) {
 
     var addComponentToParent = "((BaseComponent)component).Parent.ChildComponents.Add((BaseComponent)component);";
     var setComponent = "component = ((BaseComponent)component).Parent;";
+
+    //var checkIfNav "if (temp is IChooseable<ISelectable>)"
+
+    //if (componentType is IChooseable<ISelectable>)
+    //    return $"{addComponentToParent}\n{setComponent}\n";
 
     if (componentType is IParent) // besides GUI
         return $"{addComponentToParent}\n{setComponent}\n";

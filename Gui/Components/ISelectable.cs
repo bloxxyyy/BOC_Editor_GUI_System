@@ -1,6 +1,6 @@
 ﻿namespace Koko.RunTimeGui;
 
-public interface ISelectable {
+public interface ISelectable : IComponent {
 	public bool IsSelectable { get; set; }
-	public Action OnClick { get; set; }
+	public Action<ISelectable> OnClick { get; set; }
 }
