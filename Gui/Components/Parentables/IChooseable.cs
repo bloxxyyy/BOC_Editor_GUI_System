@@ -1,6 +1,5 @@
 ﻿namespace Koko.RunTimeGui {
-	public interface IChooseable<ISelectable> {
-		public IComponent CurrentSelectedComponent { get; set; }
-		public List<ISelectable> SelectableComponents { get; set; }
+	public interface IChooseable<T> : IParent where T : ISelectable {
+		public T? CurrentSelectedComponent { get; set; }
 	}
 }

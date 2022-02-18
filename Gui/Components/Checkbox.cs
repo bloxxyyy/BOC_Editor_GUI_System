@@ -12,7 +12,7 @@ public class Checkbox : BaseComponent, ISelectable
 	private Color FontCol { get; set; } = Color.Black;
 	public bool IsSelectable { get; set; } = true;
 	public bool IsChecked { get; private set; }
-	public Action<ISelectable> OnClick { get; set; }
+	public Action<ISelectable>? OnClick { get; set; }
 
 	public override void Draw(SpriteBatch sb)
 	{
@@ -67,7 +67,7 @@ public class Checkbox : BaseComponent, ISelectable
 
 	public override void Update()
 	{
-		if (Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed(false) && IsSelectable)
+		if (ContentRectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed(false) && IsSelectable)
         {
 			// update state
 			IsChecked = !IsChecked;

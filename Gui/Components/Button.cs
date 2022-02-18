@@ -8,7 +8,7 @@ namespace Koko.RunTimeGui;
 public class Button : BaseComponent, ISelectable {
 	public bool IsSelectable { get; set; } = true;
 	public int FontSize { get; set; } = 16;
-	public Action<ISelectable> OnClick { get; set; }
+	public Action<ISelectable>? OnClick { get; set; }
 
 	private bool IsHeld = false;
 
@@ -20,7 +20,7 @@ public class Button : BaseComponent, ISelectable {
 			IsHeld = false;
 		}
 
-		if (Rectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed(false)) {
+		if (ContentRectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed(false)) {
 			IsHeld = true;
 			OnClick?.Invoke(this);
 		}

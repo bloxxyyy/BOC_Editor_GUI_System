@@ -12,7 +12,7 @@ public class GUI : BaseComponent, IParent {
 	public static GUI Gui = new();
 
 	public bool IsRendering { get; set; } = true;
-	public List<BaseComponent> ChildComponents { get; set; } = new();
+	private List<IComponent> ChildComponents { get; set; } = new();
 	public new Color? BackgroundColor { get; set; } = null;
 	public Game GameInstance { get; set; }
 	public bool IsDraggable { get; set; } = false;
@@ -32,7 +32,7 @@ public class GUI : BaseComponent, IParent {
 		InputHelper.UpdateSetup();
 
 		if (Default.F12Press.Pressed(true))
-        {
+		{
 			string newState = !ShowFpsCounter ? "Enabled" : "Disabled";
 			Debug.WriteLine($"{newState} FPS counter");
 			ShowFpsCounter = !ShowFpsCounter;
@@ -82,7 +82,7 @@ public class GUI : BaseComponent, IParent {
 		UpdatePosition(Position);
 	}
 
-    public void UpdatePosition(Point newPosition) {
+	public void UpdatePosition(Point newPosition) {
 		int xpos = Position.X + PaddingLeft;
 		int ypos = Position.Y + PaddingTop;
 
@@ -96,5 +96,10 @@ public class GUI : BaseComponent, IParent {
 
 			ypos += ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical;
 		}
+	}
+
+	public void AddChild(IComponent newChild)
+	{
+		ChildComponents.Add(newChild);
 	}
 }

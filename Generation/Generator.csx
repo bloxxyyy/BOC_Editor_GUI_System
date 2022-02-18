@@ -1,10 +1,10 @@
-﻿#! "netcoreapp1.1"
+﻿#! "net6.0"
 #r "nuget: NetStandard.Library, 1.6.1"
 #r "nuget: System.Xml.ReaderWriter, 4.3.1"
 #r "nuget: System.Runtime.Serialization.Xml, 4.3.0"
 #r "nuget: MonoGame.Framework.DesktopGL, 3.0.8"
 #r "nuget: MonoGame.Extended, 3.8.0"
-#r "../bin/Debug/netcoreapp3.1/Koko.RunTimeGui.dll"
+#r "../bin/Debug/net6/Koko.RunTimeGui.dll"
 
 // dotnet tool install -g dotnet-script
 
@@ -104,7 +104,7 @@ public void GenerateFileInformation(FileStream fs, string filename, string xmlPa
 
                         if (Text != "") {
                             line += Text + "\";\n" +
-                                "component.ChildComponents.Add(temp);\n";
+                                "component.AddChild(temp);\n";
                         }
 
                         break;
@@ -112,7 +112,7 @@ public void GenerateFileInformation(FileStream fs, string filename, string xmlPa
                     case XmlNodeType.EndElement:
                         if (Text == "") {
                             line += "\";\n" +
-                                "component.ChildComponents.Add(temp);\n";
+                                "component.AddChild(temp);\n";
                         }
 
                         try {
@@ -164,15 +164,20 @@ string Elements(XmlReader reader, IComponent componentType) {
 
     //if (componentType is IChooseable<ISelectable>) return $"component = {setnew}, {tag} }};\n";
 
-    if (componentType is IParent) {
+    if (componentType is IParent)
+    {
         var backgroundColor = $"BackgroundColor = {GetBackgroundVal(reader)}";
         var columns = $"Columns = {GetColumnsVal(reader)}";
 
         if (componentType is GridPanel)
             return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {columns}, {isDraggable} }};\n";
 
+        if (componentType is Nav)
+            return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {isDraggable} }};\n";
+
         if (componentType is IParent)
             return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {isDraggable} }};\n";
+
 
         return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor} }};\n";
     }
@@ -184,7 +189,7 @@ string Elements(XmlReader reader, IComponent componentType) {
 private string EndTag(XmlReader reader, IComponent componentType) {
     if (reader.Name == "GUI") return "";
 
-    var addComponentToParent = "((BaseComponent)component).Parent.ChildComponents.Add((BaseComponent)component);";
+    var addComponentToParent = "((BaseComponent)component).Parent.AddChild((BaseComponent)component);";
     var setComponent = "component = ((BaseComponent)component).Parent;";
 
     //var checkIfNav "if (temp is IChooseable<ISelectable>)"
