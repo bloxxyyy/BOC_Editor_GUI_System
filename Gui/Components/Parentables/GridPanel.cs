@@ -33,7 +33,7 @@ namespace Koko.RunTimeGui
 
 		public new Color? BackgroundColor { get; set; } = null;
 		public bool IsRendering { get; set; } = true;
-		public List<BaseComponent> ChildComponents { get; set; } = new();
+		private List<IComponent> ChildComponents { get; set; } = new();
 
 		#endregion
 
@@ -52,10 +52,10 @@ namespace Koko.RunTimeGui
 			for (int col = column; col < ChildComponents.Count; col += Columns) {
 				if (ChildComponents[col] is not null)
 					maxWidth = Math.Max(maxWidth, ChildComponents[col].DisplayedSize.Width + ChildComponents[col].PaddingHorizontal);
-            }
+			}
 
 			return maxWidth;
-        }
+		}
 
 		private int GetTotalRows() => (int) Math.Ceiling((double)ChildComponents.Count / Columns);
 
@@ -80,22 +80,22 @@ namespace Koko.RunTimeGui
 
 			int[] columnWidths = new int[Columns];
 			for (int i = 0; i < Columns; i++)
-            {
+			{
 				columnWidths[i] = GetColumnWidth(i);
-            }
+			}
 
 			int totalRows = GetTotalRows();
 			int[] rowHeights = new int[totalRows];
 			for (int i = 0; i < totalRows; i++)
-            {
+			{
 				rowHeights[i] = GetRowHeight(i);
-            }
+			}
 
 			var xPos = newPosition.X + PaddingLeft;
 			var yPos = newPosition.Y + PaddingTop;
 
 			for (int i = 0; i < ChildComponents.Count; i++)
-            {
+			{
 				if (i % Columns == 0 && i != 0)
 				{
 					xPos = newPosition.X + PaddingLeft;
@@ -110,7 +110,7 @@ namespace Koko.RunTimeGui
 					ChildComponents[i].Position = childPos;
 
 				xPos += columnWidths[i % Columns];
-            }
+			}
 		}
 
 		public override void Init() {
@@ -156,6 +156,11 @@ namespace Koko.RunTimeGui
 
 			foreach (var c in ChildComponents)
 				c.Draw(sb);
+		}
+
+		public void AddChild(IComponent newChild)
+		{
+			ChildComponents.Add(newChild);
 		}
 
 

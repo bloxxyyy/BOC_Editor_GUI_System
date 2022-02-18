@@ -104,7 +104,7 @@ public void GenerateFileInformation(FileStream fs, string filename, string xmlPa
 
                         if (Text != "") {
                             line += Text + "\";\n" +
-                                "component.ChildComponents.Add(temp);\n";
+                                "component.AddChild(temp);\n";
                         }
 
                         break;
@@ -112,7 +112,7 @@ public void GenerateFileInformation(FileStream fs, string filename, string xmlPa
                     case XmlNodeType.EndElement:
                         if (Text == "") {
                             line += "\";\n" +
-                                "component.ChildComponents.Add(temp);\n";
+                                "component.AddChild(temp);\n";
                         }
 
                         try {
@@ -184,7 +184,7 @@ string Elements(XmlReader reader, IComponent componentType) {
 private string EndTag(XmlReader reader, IComponent componentType) {
     if (reader.Name == "GUI") return "";
 
-    var addComponentToParent = "((BaseComponent)component).Parent.ChildComponents.Add((BaseComponent)component);";
+    var addComponentToParent = "((BaseComponent)component).Parent.AddChild((BaseComponent)component);";
     var setComponent = "component = ((BaseComponent)component).Parent;";
 
     //var checkIfNav "if (temp is IChooseable<ISelectable>)"

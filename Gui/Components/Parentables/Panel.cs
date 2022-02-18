@@ -6,7 +6,7 @@ namespace Koko.RunTimeGui;
 
 public class Panel : BaseComponent, IParent {
 	public bool IsRendering { get; set; } = true;
-	public List<BaseComponent> ChildComponents { get; set; } = new();
+	private List<IComponent> ChildComponents { get; set; } = new();
 
 	public new Color? BackgroundColor { get; set; } = null;
 	public bool IsDraggable { get; set; } = false;
@@ -104,5 +104,10 @@ public class Panel : BaseComponent, IParent {
 		for (int i = 0; i < ChildComponents.Count; i++)
 			width = Math.Max(ChildComponents[i].DisplayedSize.Width + ChildComponents[i].PaddingHorizontal, width);
 		return width;
+	}
+
+	public void AddChild(IComponent newChild)
+	{
+		ChildComponents.Add(newChild);
 	}
 }
