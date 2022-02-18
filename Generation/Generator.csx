@@ -1,10 +1,10 @@
-﻿#! "netcoreapp1.1"
+﻿#! "net6.0"
 #r "nuget: NetStandard.Library, 1.6.1"
 #r "nuget: System.Xml.ReaderWriter, 4.3.1"
 #r "nuget: System.Runtime.Serialization.Xml, 4.3.0"
 #r "nuget: MonoGame.Framework.DesktopGL, 3.0.8"
 #r "nuget: MonoGame.Extended, 3.8.0"
-#r "../bin/Debug/netcoreapp3.1/Koko.RunTimeGui.dll"
+#r "../bin/Debug/net6/Koko.RunTimeGui.dll"
 
 // dotnet tool install -g dotnet-script
 
