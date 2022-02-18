@@ -67,7 +67,7 @@ public class Checkbox : BaseComponent, ISelectable
 
 	public override void Update()
 	{
-		if (Rectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed(false) && IsSelectable)
+		if (ContentRectangle.Contains(GuiHelper.Mouse) && Default.MouseInteraction.Pressed(false) && IsSelectable)
         {
 			// update state
 			IsChecked = !IsChecked;

@@ -39,7 +39,7 @@ public abstract class BaseComponent : IComponent {
 		get => PaddingTop + PaddingBottom;
 	}
 
-	public Rectangle Rectangle {
+	public Rectangle ContentRectangle {
 		get => new(Position.X + PaddingLeft, Position.Y + PaddingTop, DisplayedSize.Width, DisplayedSize.Height);
 	}
 

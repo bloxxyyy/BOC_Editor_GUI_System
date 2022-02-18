@@ -20,7 +20,7 @@ public class Button : BaseComponent, ISelectable {
 			IsHeld = false;
 		}
 
-		if (Rectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed(false)) {
+		if (ContentRectangle.Contains(GuiHelper.Mouse) && IsSelectable && Default.MouseInteraction.Pressed(false)) {
 			IsHeld = true;
 			OnClick?.Invoke(this);
 		}

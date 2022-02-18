@@ -84,8 +84,8 @@ public class Panel : BaseComponent, IParent {
 		if (IsDraggable && Default.MouseInteraction.Pressed(false))
 		{
 			var handleRect = new Rectangle(
-				new Point(Rectangle.Left, Rectangle.Bottom - DraggerHeight),
-				new Size(Rectangle.Width, DraggerHeight)
+				new Point(ContentRectangle.Left, ContentRectangle.Bottom - DraggerHeight),
+				new Size(ContentRectangle.Width, DraggerHeight)
 			);
 
 			if (handleRect.Contains(GuiHelper.Mouse))
