@@ -2,9 +2,9 @@
 
 namespace Koko.RunTimeGui;
 
-public class FontHelper {
+public static class FontHelper {
 
-	public static FontSystem FontSystem = new FontSystem();
+	public static readonly FontSystem FontSystem = new();
 	public static void Add(string rootDir) {
 		FontSystem.AddFont(File.ReadAllBytes($"{rootDir}/font-file.ttf"));
 	}

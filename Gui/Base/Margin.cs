@@ -6,8 +6,8 @@ public class Margin {
 	public ushort Left { get; set; } = 0;
 	public ushort Right { get; set; } = 0;
 
-	public int Width { get => Left + Right; private set { } }
-	public int Height { get => Top + Bottom; private set { } }
+	public int Width { get => Left + Right; }
+	public int Height { get => Top + Bottom; }
 
 	public  Margin(ushort top, ushort bottom, ushort left, ushort right) {
 		Top = top;

@@ -12,8 +12,8 @@ public class Button : BaseComponent, ISelectable {
 
 	private bool IsHeld = false;
 
-	private Color? _bgColor { get => IsHeld ? Color.Gray : BackgroundColor; }
-	private Color _borderColor { get => IsHeld ? Color.SlateGray : Color.Black; }
+	private Color? BgColor { get => IsHeld ? Color.Gray : BackgroundColor; }
+	private Color BorderColor { get => IsHeld ? Color.SlateGray : Color.Black; }
 
 	public override void Update() {
 		if (Default.MouseInteraction.Released(false)) {
@@ -36,7 +36,7 @@ public class Button : BaseComponent, ISelectable {
 		var display = new Size(width, height);
 		var borderPos = new Point(Position.X + MarginalSpace.Left, Position.Y + MarginalSpace.Top);
 
-		sb.FillRectangle(new Rectangle(borderPos, display), _borderColor);
+		sb.FillRectangle(new Rectangle(borderPos, display), BorderColor);
 
 		// draw button background
 		var backgroundPos = new Point(Position.X + PaddingLeft, Position.Y + PaddingTop);
@@ -44,8 +44,8 @@ public class Button : BaseComponent, ISelectable {
 		if (BackgroundColor is null)
 			BackgroundColor = Color.White;
 
-		if (_bgColor is not null)
-			sb.FillRectangle(new Rectangle(backgroundPos, DisplayedSize), _bgColor.Value);
+		if (BgColor is not null)
+			sb.FillRectangle(new Rectangle(backgroundPos, DisplayedSize), BgColor.Value);
 
 		// draw text
 		SpriteFontBase font18 = FontHelper.FontSystem.GetFont(FontSize);
