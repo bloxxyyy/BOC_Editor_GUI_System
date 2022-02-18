@@ -164,15 +164,20 @@ string Elements(XmlReader reader, IComponent componentType) {
 
     //if (componentType is IChooseable<ISelectable>) return $"component = {setnew}, {tag} }};\n";
 
-    if (componentType is IParent) {
+    if (componentType is IParent)
+    {
         var backgroundColor = $"BackgroundColor = {GetBackgroundVal(reader)}";
         var columns = $"Columns = {GetColumnsVal(reader)}";
 
         if (componentType is GridPanel)
             return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {columns}, {isDraggable} }};\n";
 
+        if (componentType is Nav)
+            return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {isDraggable} }};\n";
+
         if (componentType is IParent)
             return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor}, {isDraggable} }};\n";
+
 
         return $"component = {setnew}, {tag}, {border}, {margin}, {backgroundColor} }};\n";
     }

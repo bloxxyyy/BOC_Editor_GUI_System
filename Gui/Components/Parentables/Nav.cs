@@ -7,30 +7,94 @@ namespace Koko.RunTimeGui;
 /// <summary>
 /// Container for navigatable elements, Does not choose children size or position.
 /// </summary>
-public class Nav : BaseComponent, IChooseable<ISelectable> {
-	public List<ISelectable> SelectableComponents { get; set; } = new();
-	public IComponent CurrentSelectedComponent { get; set; }
+public class Nav : BaseComponent, IChooseable<ISelectable>
+{
+	public ISelectable? CurrentSelectedComponent { get; set; } = null;
+	public bool IsRendering { get; set; } = true;
+	public bool IsDraggable { get; set; } = false;
+	public int DraggerHeight { get; set; } = 0;
+	private List<ISelectable> ChildComponents { get; set; } = new();
 
-	public override void Draw(SpriteBatch sb) {
-		for (int i = 0; i < SelectableComponents.Count; i++) {
-			var obj = SelectableComponents[i];
-			if (obj != CurrentSelectedComponent) return;
+	public override void Draw(SpriteBatch sb)
+	{
+		for (int i = 0; i < ChildComponents.Count; i++)
+		{
+			var obj = ChildComponents[i];
+			obj.Draw(sb);
 
-			if (obj == CurrentSelectedComponent) {
-				var targetPos = new Point(obj.Position.X + obj.DisplayedSize.Width, obj.Position.Y + obj.DisplayedSize.Height);
-				sb.DrawLine(obj.Position.X, obj.Position.Y, targetPos.X, targetPos.Y, Color.Orange);
-				break;
+			//if (obj != CurrentSelectedComponent)
+			//	continue;
+
+			if (obj == CurrentSelectedComponent)
+			{
+				var targetPos = new Point(obj.Position.X + obj.DisplayedSize.Width + obj.PaddingHorizontal, obj.Position.Y + obj.DisplayedSize.Height + obj.PaddingVertical);
+				sb.DrawLine(obj.Position.X, targetPos.Y, targetPos.X, targetPos.Y, Color.Orange);
 			}
 		}
 	}
 
-	public override void Init() => SelectableComponents.ForEach(c => c.OnClick += SetActive);
+	public override void Init()
+	{
+		var width = 0;
+		var height = 0;
+
+		for (var i = 0; i < ChildComponents.Count; i++)
+		{
+			ChildComponents[i].Init();
+			ChildComponents[i].OnClick += SetActive;
+			width += ChildComponents[i].DisplayedSize.Width + ChildComponents[i].PaddingHorizontal;
+			height = Math.Max(ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical, height);
+		}
+
+		DisplayedSize = new Size(width, height);
+	}
+
 	private void SetActive(ISelectable selectedComponent) => CurrentSelectedComponent = selectedComponent;
 
-	public override void Update() { }
+	public override void Update() {
+		if (!IsRendering)
+			return;
 
-	public void UpdatePosition(Point newPosition) {
-		
+		for (var i = 0; i < ChildComponents.Count; i++)
+		{
+			ChildComponents[i].Update();
+		}
+	}
+
+	public void UpdatePosition(Point newPosition)
+	{
+		Position = newPosition;
+
+		var x = newPosition.X;
+		var y = newPosition.Y;
+
+		for (var i = 0; i < ChildComponents.Count; i++)
+		{
+			if (ChildComponents[i] is IParent container)
+			{
+				container.UpdatePosition(new Point(x, y));
+			}
+			else
+			{
+				ChildComponents[i].Position = new Point(x, y);
+			}
+
+			x += ChildComponents[i].DisplayedSize.Width + ChildComponents[i].PaddingHorizontal;
+		}
+	}
+
+	public void AddChild(ISelectable newChild)
+	{
+		ChildComponents.Add(newChild);
+	}
+
+	public void AddChild(IComponent newChild)
+	{
+		if (newChild is not ISelectable)
+		{
+			throw new ArgumentException("New child is not an ISelectable");
+		}
+
+		AddChild((ISelectable)newChild);
 	}
 }
-
