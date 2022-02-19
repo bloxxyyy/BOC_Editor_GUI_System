@@ -39,17 +39,44 @@ namespace Koko.RuntimeGui {
 void GetElementAndRecursiveOverChildren(string currentPath, XmlDocument doc) {
 	foreach (XmlNode node in doc.SelectNodes(currentPath + "//*")) {
 		var foundnodes = node.ChildNodes.OfType<XmlElement>().Any();
+		XmlAttributeCollection attributes = node.Attributes;
 
 		if (foundnodes) {
-			#> component = new <#=node.Name#>() {Parent = component}; <#+
+			#> component = new <#=node.Name#>() {Parent = component, <#+
+				SetValueBasedOnAttribute(attributes);
+			#>};<#+
 
 			foreach(XmlElement childNode in node.ChildNodes.OfType<XmlElement>()) {
                 GetElementAndRecursiveOverChildren(currentPath + "//"+childNode.Name, doc);
 			}
+
+			#>
+			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			component = ((BaseComponent)component).Parent;
+			<#+
+
         } else {
-			#> temp = new <#=node.Name#>() {Parent = component}; <#+
+			#> temp = new <#=node.Name#>() {Parent = component, <#+
+				SetValueBasedOnAttribute(attributes);
+			#>}; <#+
+			#> component.AddChild(temp); <#+
 		}
 
+	}
+}
+
+void SetValueBasedOnAttribute(XmlAttributeCollection attrs) {
+	foreach(XmlAttribute attr in attrs) {
+		switch (attr.Name) {
+			case "Margin":
+				#>MarginalSpace = new Margin(<#=attr.Value#>),<#+
+				break;
+			case "Border":
+				#>BorderSpace = new Margin(<#=attr.Value#>),<#+
+				break;
+			default:
+				break;
+		}
 	}
 }
 #>
