@@ -1,11 +1,14 @@
 ﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ output extension=".cs" #>
 <#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Core" #>
 <#@ assembly name="EnvDTE" #>
 <#@ assembly name="$(SolutionDir)\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.dll" #>
 <#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Linq" #>
 <#@ import namespace="Koko.RunTimeGui" #>
 <#@ import namespace="System.Collections.Generic" #>
+
 <#
 	EnvDTE.DTE dte = (EnvDTE.DTE) ((IServiceProvider) this.Host).GetService(typeof(EnvDTE.DTE));
 	var path = System.IO.Path.Combine(dte.ActiveDocument.Path, "..\\..\\..\\BOC_Editor\\XML\\Menu.xml");
@@ -27,24 +30,26 @@ namespace Koko.RuntimeGui {
 		private BaseComponent temp;
 
 		public void Init() {
-			<# foreach (XmlNode node in doc.SelectNodes("/GUI/*")) { #>	
-			SetComponent(new <#=node.Name#>() {Parent = component});
-			<#}#>	
-		}
-
-		private void SetComponent(IComponent comp) {
-			if (component is IParent parent) {
-				component = parent;
-				<# foreach (XmlNode node2 in doc.SelectNodes($"/GUI/{node.Name}/*")) { #>
-				SetComponent(new <#=node2.Name#>() {Parent = component});
-				<#}#>	
-			} else {
-				temp = (BaseComponent)comp;
-			}
-
-			((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
-			component = (component as BaseComponent).Parent;
+			<# GetElementAndRecursiveOverChildren("//GUI", doc);#>
 		}
 	}
 }
 
+<#+
+void GetElementAndRecursiveOverChildren(string currentPath, XmlDocument doc) {
+	foreach (XmlNode node in doc.SelectNodes(currentPath + "//*")) {
+		var foundnodes = node.ChildNodes.OfType<XmlElement>().Any();
+
+		if (foundnodes) {
+			#> component = new <#=node.Name#>() {Parent = component}; <#+
+
+			foreach(XmlElement childNode in node.ChildNodes.OfType<XmlElement>()) {
+                GetElementAndRecursiveOverChildren(currentPath + "//"+childNode.Name, doc);
+			}
+        } else {
+			#> temp = new <#=node.Name#>() {Parent = component}; <#+
+		}
+
+	}
+}
+#>
