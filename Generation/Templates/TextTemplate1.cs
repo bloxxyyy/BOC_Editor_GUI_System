@@ -15,17 +15,48 @@ namespace Koko.RuntimeGui {
 		private BaseComponent temp;
 
 		public void Init() {
-			 component = new Nav() {Parent = component, };			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			
+	//"//GUI"
+
+	 component = new Nav() {Parent = component, }; 
+	//"//GUI//Nav"
+
+	 temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-			 temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new GridPanel() {Parent = component, MarginalSpace = new Margin(10),}; temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new Panel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			 temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new GridPanel() {Parent = component, MarginalSpace = new Margin(10),}; 
+	//"//GUI//GridPanel"
+
+	 component = new Panel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),}; 
+	//"//GUI//GridPanel//Panel"
+
+	 temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-			 temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new GridPanel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			 temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new GridPanel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),}; 
+	//"//GUI//GridPanel//GridPanel"
+
+	 temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
 			 temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-			 component = new Panel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			 component = new Panel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),}; 
+	//"//GUI//Panel"
+
+	 temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-			 temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new GridPanel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			 temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new GridPanel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),}; 
+	//"//GUI//GridPanel"
+
+	 component = new Panel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),}; 
+	//"//GUI//GridPanel//Panel"
+
+	 temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			component = ((BaseComponent)component).Parent;
+			 temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};  component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  component.AddChild(temp);  component = new GridPanel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),}; 
+	//"//GUI//GridPanel//GridPanel"
+
+	 temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			component = ((BaseComponent)component).Parent;
+			 temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
 			 temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};  component.AddChild(temp); 		}
 	}
