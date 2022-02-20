@@ -8,7 +8,7 @@
 using Koko.RunTimeGui.Gui.Initable_Components;
 using Koko.RunTimeGui;
 
-namespace Koko.Generated {
+namespace Koko.Generated { 
 
 	public class GenerateInventory : IInitable {
 
@@ -16,16 +16,13 @@ namespace Koko.Generated {
 		private BaseComponent temp;
 
 		public void Init() {
-			component = new Nav() { Parent = component, };
-			temp = new Button() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
+			 component = new Nav() {Parent = component, };  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};
 			temp.Text = "Inventory";
-			component.AddChild(temp);
-			temp = new Button() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
+			 component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};
 			temp.Text = "Inventory2";
-			component.AddChild(temp);
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			 component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-		}
+					}
 	}
 	public class GenerateMenu : IInitable {
 
@@ -33,34 +30,27 @@ namespace Koko.Generated {
 		private BaseComponent temp;
 
 		public void Init() {
-			component = new GridPanel() { Parent = component, MarginalSpace = new Margin(10), };
-			component = new Panel() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
-			temp = new Checkbox() { Parent = component, MarginalSpace = new Margin(5), };
+			 component = new GridPanel() {Parent = component, MarginalSpace = new Margin(10),};  component = new Panel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};
 			temp.Text = "Yoran likes boys? 冰淇淋";
-			component.AddChild(temp);
-			temp = new Button() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
+			 component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};
 			temp.Text = "Quit";
-			component.AddChild(temp);
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			 component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};
+			temp.Text = "Quit Again";
+			 component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-			component = new GridPanel() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
-			temp = new Label() { Parent = component, MarginalSpace = new Margin(2), };
+			 component = new GridPanel() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};
 			temp.Text = "Name:";
-			component.AddChild(temp);
-			temp = new Label() { Parent = component, MarginalSpace = new Margin(2), };
+			 component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};
 			temp.Text = "Piet";
-			component.AddChild(temp);
-			temp = new Label() { Parent = component, MarginalSpace = new Margin(2), };
+			 component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};
 			temp.Text = "Age:";
-			component.AddChild(temp);
-			temp = new Label() { Parent = component, MarginalSpace = new Margin(2), };
+			 component.AddChild(temp);  temp = new Label() {Parent = component, MarginalSpace = new Margin(2),};
 			temp.Text = "18";
-			component.AddChild(temp);
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+			 component.AddChild(temp); 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
+						((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
-		}
+					}
 	}
 }
 
