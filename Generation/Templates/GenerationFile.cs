@@ -9,7 +9,8 @@ using Koko.RunTimeGui.Gui.Initable_Components;
 using Koko.RunTimeGui;
 
 namespace Koko.Generated {
-	public class Generate : IInitable {
+
+	public class GenerateInventory : IInitable {
 
 		private IParent component = GUI.Gui;
 		private BaseComponent temp;
@@ -24,6 +25,14 @@ namespace Koko.Generated {
 			component.AddChild(temp);
 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
+		}
+	}
+	public class GenerateMenu : IInitable {
+
+		private IParent component = GUI.Gui;
+		private BaseComponent temp;
+
+		public void Init() {
 			component = new GridPanel() { Parent = component, MarginalSpace = new Margin(10), };
 			component = new Panel() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
 			temp = new Checkbox() { Parent = component, MarginalSpace = new Margin(5), };

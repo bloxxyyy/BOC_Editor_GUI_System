@@ -5,16 +5,12 @@
 <#@ assembly name="EnvDTE" #>
 <#@ assembly name="$(SolutionDir)\bin\Debug\netcoreapp3.1\Koko.RunTimeGui.dll" #>
 <#@ import namespace="System.Xml" #>
+<#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="Koko.RunTimeGui" #>
 <#@ import namespace="System.Collections.Generic" #>
 
-<#
-	EnvDTE.DTE dte = (EnvDTE.DTE) ((IServiceProvider) this.Host).GetService(typeof(EnvDTE.DTE));
-	var path = System.IO.Path.Combine(dte.ActiveDocument.Path, "..\\..\\..\\BOC_Editor\\XML\\Menu.xml");
-	XmlDocument doc = new XmlDocument();
-	doc.Load(path);
-#>//dev env fix https://stackoverflow.com/questions/51550265/t4-template-could-not-load-file-or-assembly-system-runtime-version-4-2-0-0
+//dev env fix https://stackoverflow.com/questions/51550265/t4-template-could-not-load-file-or-assembly-system-runtime-version-4-2-0-0
 //<dependentAssembly>
 //<assemblyIdentity name="System.Runtime" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
 //<bindingRedirect oldVersion="0.0.0.0-5.0.0.0" newVersion="4.0.0.0"/>
@@ -24,7 +20,22 @@ using Koko.RunTimeGui.Gui.Initable_Components;
 using Koko.RunTimeGui;
 
 namespace Koko.Generated { 
-	public class Generate : IInitable {
+
+<#
+	string name = "Menu";
+
+	EnvDTE.DTE dte = (EnvDTE.DTE) ((IServiceProvider) this.Host).GetService(typeof(EnvDTE.DTE));
+
+	var xmlPath = dte.ActiveDocument.Path + "..\\..\\..\\BOC_Editor\\XML";
+	var files = GetAllXmlFiles(xmlPath);
+
+	foreach(var file in files) {
+		name = System.IO.Path.GetFileNameWithoutExtension(file).Replace(" ", "_");
+		var path = System.IO.Path.Combine(file);
+		XmlDocument doc = new XmlDocument();
+		doc.Load(path);
+#>
+	public class Generate<#=name#> : IInitable {
 
 		private IParent component = GUI.Gui;
 		private BaseComponent temp;
@@ -33,6 +44,7 @@ namespace Koko.Generated {
 			<# GetElementAndRecursiveOverChildren("/GUI", doc);#>
 		}
 	}
+<#}#>
 }
 
 <#+
@@ -74,5 +86,13 @@ void SetValueBasedOnAttribute(XmlAttributeCollection attrs) {
 				break;
 		}
 	}
+}
+
+private List<String> GetAllXmlFiles(string targetDirectory) {
+    var files = new List<String>();
+    foreach (string fileName in Directory.EnumerateFiles(targetDirectory, "*.xml", SearchOption.AllDirectories)) {
+        files.Add(fileName);
+    }
+    return files;
 }
 #>

@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Generation\Templates\TextTemplate1.cs">
+    <None Include="Generation\Templates\GenerationFile.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>TextTemplate1.tt</DependentUpon>
+      <DependentUpon>GenerationFile.tt</DependentUpon>
     </None>
   </ItemGroup>
 
@@ -27,9 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Generation\Templates\TextTemplate1.tt">
+    <None Update="Generation\Templates\GenerationFile.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TextTemplate1.cs</LastGenOutput>
+      <LastGenOutput>GenerationFile.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -38,6 +38,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Generation\Templates\GenerationFile.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GenerationFile.tt</DependentUpon>
+    </Compile>
     <Compile Update="Generation\Templates\TextTemplate1.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
