@@ -30,39 +30,27 @@ namespace Koko.RuntimeGui {
 		private BaseComponent temp;
 
 		public void Init() {
-			<# GetElementAndRecursiveOverChildren("//GUI", doc);#>
+			<# GetElementAndRecursiveOverChildren("/GUI", doc);#>
 		}
 	}
 }
 
 <#+
 void GetElementAndRecursiveOverChildren(string currentPath, XmlDocument doc) {
-	var path = currentPath;
-
-	#>
-
-	//"<#=path#>"
-
-	<#+
-
-
-	foreach (XmlNode node in doc.SelectNodes(path + "//*")) {
+	foreach (XmlNode node in doc.SelectNodes(currentPath + "/*")) {
 		var foundnodes = node.ChildNodes.OfType<XmlElement>().Any();
 		XmlAttributeCollection attributes = node.Attributes;
-
 		if (foundnodes) {
-			#> component = new <#=node.Name#>() {Parent = component, <#+
-				SetValueBasedOnAttribute(attributes);
-			#>}; <#+
 
-			GetElementAndRecursiveOverChildren(path + "//"+node.Name, doc);
+			#> component = new <#=node.Name#>() {Parent = component, <#+SetValueBasedOnAttribute(attributes);#>}; <#+
+			GetElementAndRecursiveOverChildren(currentPath + "/"+node.Name, doc);
 
 			#>
 			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
 			component = ((BaseComponent)component).Parent;
 			<#+
 
-        } else {
+		} else {
 			#> temp = new <#=node.Name#>() {Parent = component, <#+
 				SetValueBasedOnAttribute(attributes);
 			#>}; <#+
