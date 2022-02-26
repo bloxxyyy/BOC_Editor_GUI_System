@@ -9,4 +9,5 @@ public interface IParent {
 	public void UpdatePosition(Point newPosition);
 	public void AddChild(IComponent newChild);
 	void RemoveChild(IComponent component);
+	public List<IComponent> GetChildren();
 }

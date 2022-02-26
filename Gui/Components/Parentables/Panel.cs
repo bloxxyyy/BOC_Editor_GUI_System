@@ -71,11 +71,43 @@ public class Panel : BaseComponent, IParent {
 		UpdatePosition(Position);
 	}
 
+	private IParent? DoesContain(List<IComponent> components) {
+		IParent? IParent = null;
+		components.ForEach(c => {
+			if (c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
+				var item = DoesContain(parent.GetChildren());
+				if (item is not null) {
+					IParent = item;
+				} else {
+					IParent = parent;
+				}
+			}
+		});
+
+		return IParent;
+	}
+
 	Point offset;
 	bool isHeld = false;
 	public override void Update() {
 		if (!IsRendering) return;
-		if (Default.MouseInteraction.Released(false)) isHeld = false;
+
+		if (Default.MouseInteraction.Released(false)) {
+			isHeld = false;
+
+			GUI.Gui.GetChildren().ForEach(c => {
+				if (c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
+					var item = DoesContain(parent.GetChildren());
+					if (item is not null) {
+						Parent = item;
+					} else {
+						Parent = parent;
+					}
+				}
+			});
+
+			((IComponent)Parent).Init();
+		}
 
 		for (int i = 0; i < ChildComponents.Count; i++)
 			ChildComponents[i].Update();
@@ -91,8 +123,7 @@ public class Panel : BaseComponent, IParent {
 				new Size(ContentRectangle.Width, DraggerHeight)
 			);
 
-			if (handleRect.Contains(GuiHelper.Mouse))
-			{
+			if (handleRect.Contains(GuiHelper.Mouse)) {
 				offset = GuiHelper.Mouse - Position;
 				isHeld = true;
 			}
@@ -114,4 +145,5 @@ public class Panel : BaseComponent, IParent {
 		ChildComponents.Remove(child);
 		Init();
 	}
+	public List<IComponent> GetChildren() => ChildComponents;
 }

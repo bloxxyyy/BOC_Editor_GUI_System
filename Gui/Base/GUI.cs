@@ -66,4 +66,5 @@ public class GUI : BaseComponent, IParent {
 
 	public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
 	public void RemoveChild(IComponent child) => ChildComponents.Remove(child);
+	public List<IComponent> GetChildren() => ChildComponents;
 }

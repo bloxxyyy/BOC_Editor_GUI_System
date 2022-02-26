@@ -160,6 +160,7 @@ namespace Koko.RunTimeGui
 
 		public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
 		public void RemoveChild(IComponent child) => ChildComponents.Remove(child);
+		public List<IComponent> GetChildren() => ChildComponents;
 
 		#endregion
 	}

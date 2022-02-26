@@ -83,4 +83,8 @@ public class Nav : BaseComponent, IChooseable<ISelectable> {
 		if (child is ISelectable selectable) ChildComponents.Remove(selectable);
 		throw new ArgumentException("Cant remove this object from the list!");
 	}
+
+	public List<IComponent> GetChildren() {
+		return (from IComponent selectableIComponent in ChildComponents select selectableIComponent).ToList();
+	}
 }
