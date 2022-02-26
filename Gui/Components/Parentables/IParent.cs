@@ -8,4 +8,5 @@ public interface IParent {
 	public int DraggerHeight { get; set; }
 	public void UpdatePosition(Point newPosition);
 	public void AddChild(IComponent newChild);
+	void RemoveChild(IComponent component);
 }

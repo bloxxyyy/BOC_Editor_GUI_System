@@ -81,8 +81,12 @@ public class Panel : BaseComponent, IParent {
 
 		if (Default.MouseInteraction.Released(false)) isHeld = false;
 
-		if (IsDraggable && Default.MouseInteraction.Pressed(false))
-		{
+		if (IsDraggable && Default.MouseInteraction.Pressed(false)) {
+
+			Parent.RemoveChild(this);
+			Parent = GUI.Gui;
+			Parent.AddChild(this);
+
 			var handleRect = new Rectangle(
 				new Point(ContentRectangle.Left, ContentRectangle.Bottom - DraggerHeight),
 				new Size(ContentRectangle.Width, DraggerHeight)
@@ -106,8 +110,6 @@ public class Panel : BaseComponent, IParent {
 		return width;
 	}
 
-	public void AddChild(IComponent newChild)
-	{
-		ChildComponents.Add(newChild);
-	}
+	public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
+	public void RemoveChild(IComponent child) => ChildComponents.Remove(child);
 }

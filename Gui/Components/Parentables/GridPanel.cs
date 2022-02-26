@@ -158,11 +158,8 @@ namespace Koko.RunTimeGui
 				c.Draw(sb);
 		}
 
-		public void AddChild(IComponent newChild)
-		{
-			ChildComponents.Add(newChild);
-		}
-
+		public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
+		public void RemoveChild(IComponent child) => ChildComponents.Remove(child);
 
 		#endregion
 	}

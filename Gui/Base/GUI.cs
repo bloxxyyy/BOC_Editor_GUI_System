@@ -1,17 +1,13 @@
 ﻿using Apos.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
-using MonoGame.Extended;
-using FontStashSharp;
 
 namespace Koko.RunTimeGui;
 
 public class GUI : BaseComponent, IParent {
 
 	public static readonly GUI Gui = new();
-
-	private Game? _gameInstance;
+	public static Game? GAME;
 
 	public bool IsRendering { get; set; } = true;
 	private List<IComponent> ChildComponents { get; set; } = new();
@@ -19,35 +15,17 @@ public class GUI : BaseComponent, IParent {
 
 	public bool IsDraggable { get; set; } = false;
 	public int DraggerHeight { get; set; } = 0;
-	private bool ShowFpsCounter { get; set; } = false;
-	private double frames = 0;
-	private double updates = 0;
-	private double last = 0;
-	private readonly double msgFrequency = 1.0f;
-	private string msg = "";
 
 	public override void Update() {}
 	public void Update(GameTime gameTime) {
 		if (!IsRendering) return;
 		InputHelper.UpdateSetup();
 
-		if (Default.F12Press.Pressed(true)) {
-			string newState = !ShowFpsCounter ? "Enabled" : "Disabled";
-			Debug.WriteLine($"{newState} FPS counter");
-			ShowFpsCounter = !ShowFpsCounter;
-		}
+		Fps.CheckKeyPress();
 
 		for (int i = 0; i < ChildComponents.Count; i++) ChildComponents[i].Update();
 
-		var now = gameTime.TotalGameTime.TotalSeconds;
-		var elapsed = now - last;
-		if (elapsed > msgFrequency) {
-			msg = $" FPS: {frames / elapsed:0.##} \n Elapsed time: {elapsed:0.##}s \n Updates: {updates} \n Frames: {frames} ";
-			frames = 0;
-			updates = 0;
-			last = now;
-		}
-		updates++;
+		Fps.Update(gameTime);
 
 		InputHelper.UpdateCleanup();
 	}
@@ -58,19 +36,11 @@ public class GUI : BaseComponent, IParent {
 			ChildComponents[i].Draw(sb);
 		}
 
-		if (ShowFpsCounter)
-		{
-			var textSize = GuiHelper.MeasureString(msg, 16);
-			var textPos = new Point((int)GuiHelper.GetUICamera().BoundingRectangle.Right - textSize.Width, 0);
-			sb.FillRectangle(new Rectangle(textPos, textSize), Color.Black);
-			sb.DrawString(FontHelper.FontSystem.GetFont(16), msg, textPos.ToVector2(), Color.White);
-		}
-
-		frames++;
+		Fps.Draw(sb);
 	}
 
 	public override void Init() {
-		InputHelper.Setup(GetGameInstance());
+		InputHelper.Setup(GAME);
 		for (int i = 0; i < ChildComponents.Count; i++) {
 			ChildComponents[i].Init();
 		}
@@ -94,17 +64,6 @@ public class GUI : BaseComponent, IParent {
 		}
 	}
 
-	public void AddChild(IComponent newChild)
-	{
-		ChildComponents.Add(newChild);
-	}
-
-	public Game GetGameInstance() {
-		if (_gameInstance is not null)
-			return _gameInstance;
-
-		throw new ArgumentNullException($"Instance: {_gameInstance} in {this} not allowed to be null", nameof(_gameInstance));
-	}
-
-	public void SetGameInstance(Game value) => _gameInstance = value;
+	public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
+	public void RemoveChild(IComponent child) => ChildComponents.Remove(child);
 }
