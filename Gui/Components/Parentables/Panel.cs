@@ -77,7 +77,8 @@ public class Panel : BaseComponent, IParent {
 		if (!IsRendering) return;
 		if (Default.MouseInteraction.Released(false)) isHeld = false;
 
-		ChildComponents.ForEach(c => c.Update());
+		for (int i = 0; i < ChildComponents.Count; i++)
+			ChildComponents[i].Update();
 
 		if (IsDraggable && Default.MouseInteraction.Pressed(false)) {
 
