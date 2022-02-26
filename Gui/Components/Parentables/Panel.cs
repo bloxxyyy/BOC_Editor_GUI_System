@@ -75,11 +75,9 @@ public class Panel : BaseComponent, IParent {
 	bool isHeld = false;
 	public override void Update() {
 		if (!IsRendering) return;
-
-		for (int i = 0; i < ChildComponents.Count; i++)
-			ChildComponents[i].Update();
-
 		if (Default.MouseInteraction.Released(false)) isHeld = false;
+
+		ChildComponents.ForEach(c => c.Update());
 
 		if (IsDraggable && Default.MouseInteraction.Pressed(false)) {
 
@@ -111,5 +109,8 @@ public class Panel : BaseComponent, IParent {
 	}
 
 	public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
-	public void RemoveChild(IComponent child) => ChildComponents.Remove(child);
+	public void RemoveChild(IComponent child) {
+		ChildComponents.Remove(child);
+		Init();
+	}
 }

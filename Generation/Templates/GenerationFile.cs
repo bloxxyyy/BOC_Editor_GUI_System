@@ -53,7 +53,17 @@ namespace Koko.Generated {
 			temp.Text = "Quit";
 			 component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};
 			temp.Text = "Quit Again";
+			 component.AddChild(temp);  component = new Panel() {Parent = component, IsDraggable = true,MarginalSpace = new Margin(5),BackgroundColor = new Color(139, 69, 19, 255),BorderSpace = new Margin(1),};  temp = new Checkbox() {Parent = component, MarginalSpace = new Margin(5),};
+			temp.Text = "Yoran likes bossys? 冰淇淋";
+			 component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};
+			temp.Text = "Qssuit";
+			 component.AddChild(temp);  temp = new Button() {Parent = component, MarginalSpace = new Margin(5),BorderSpace = new Margin(1),};
+			temp.Text = "Qssuit Again";
 			 component.AddChild(temp); 			if (component is not null) {
+				((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
+				component = ((BaseComponent)component).Parent;
+			}
+						if (component is not null) {
 				((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
 				component = ((BaseComponent)component).Parent;
 			}
