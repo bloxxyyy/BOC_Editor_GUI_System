@@ -9,6 +9,8 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="Koko.RunTimeGui" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Globalization" #>
 
 //dev env fix https://stackoverflow.com/questions/51550265/t4-template-could-not-load-file-or-assembly-system-runtime-version-4-2-0-0
 //<dependentAssembly>
@@ -18,6 +20,7 @@
 
 using Koko.RunTimeGui.Gui.Initable_Components;
 using Koko.RunTimeGui;
+using Microsoft.Xna.Framework;
 
 namespace Koko.Generated { 
 
@@ -82,6 +85,15 @@ void SetValueBasedOnAttribute(XmlAttributeCollection attrs) {
 			case "Border":
 				#>BorderSpace = new Margin(<#=attr.Value#>),<#+
 				break;
+			case "BackGroundColor":
+				#>BackgroundColor = <#=GetBackgroundVal(attr.Value)#>,<#+
+				break;
+			case "Columns":
+				#>Columns = <#=(GetIntergerValue(attr.Value) == 0) ? 2 : attr.Value#>,<#+
+				break;
+			case "IsDraggable":
+				#>IsDraggable = <#=GetBooleanAttribute(attr.Value).ToString().ToLower()#>,<#+
+				break;
 			default:
 				break;
 		}
@@ -94,5 +106,38 @@ private List<String> GetAllXmlFiles(string targetDirectory) {
         files.Add(fileName);
     }
     return files;
+}
+
+private string GetBackgroundVal(string background) {
+    if (background.StartsWith("#")) {
+        var rx = new Regex(@"^#(?<alpha>[0-9a-f]{2})?(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var groups = rx.Matches(background)[0].Groups;
+        var alpha = byte.Parse(groups[1].Value != "" ? groups[1].Value : "ff", NumberStyles.HexNumber);
+        var red = byte.Parse(groups[2].Value, NumberStyles.HexNumber);
+        var green = byte.Parse(groups[3].Value, NumberStyles.HexNumber);
+        var blue = byte.Parse(groups[4].Value, NumberStyles.HexNumber);
+        return $"new Color({red}, {green}, {blue}, {alpha})";
+    } else {
+        return "Color." + background;
+    }
+}
+
+private bool GetBooleanAttribute(string value) {
+    value = value.ToLower();
+    if (value == "yes" || value == "true" || value == "1")  return true;
+    if (value == "no" || value == "false" || value == "0") return false;
+
+    throw new ArgumentOutOfRangeException($"Don't know what to do with value '{value}' for boolean attribute");
+}
+
+private int GetIntergerValue(string margin) {
+    if (margin != null) {
+        try {
+            return Int32.Parse(margin);
+        } catch (FormatException e) {
+            Console.WriteLine(e.Message);
+        }
+    }
+    return 0;
 }
 #>
