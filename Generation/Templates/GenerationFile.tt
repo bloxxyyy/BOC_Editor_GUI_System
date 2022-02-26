@@ -40,8 +40,10 @@ namespace Koko.Generated {
 #>
 	public class Generate<#=name#> : IInitable {
 
-		private IParent component = GUI.Gui;
-		private BaseComponent temp;
+		private IParent? component = GUI.Gui;
+#pragma warning disable S1450
+		private BaseComponent? temp;
+#pragma warning restore S1450
 
 		public void Init() {
 			<# GetElementAndRecursiveOverChildren("/GUI", doc);#>
@@ -61,8 +63,10 @@ void GetElementAndRecursiveOverChildren(string currentPath, XmlDocument doc) {
 			GetElementAndRecursiveOverChildren(currentPath + "/"+node.Name, doc);
 
 			#>
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
-			component = ((BaseComponent)component).Parent;
+			if (component is not null) {
+				((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
+				component = ((BaseComponent)component).Parent;
+			}
 			<#+
 
 		} else {

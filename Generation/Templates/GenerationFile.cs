@@ -13,8 +13,10 @@ namespace Koko.Generated {
 
 	public class GenerateInventory : IInitable {
 
-		private IParent component = GUI.Gui;
-		private BaseComponent temp;
+		private IParent? component = GUI.Gui;
+#pragma warning disable S1450
+		private BaseComponent? temp;
+#pragma warning restore S1450
 
 		public void Init() {
 			component = new Nav() { Parent = component, };
@@ -24,14 +26,18 @@ namespace Koko.Generated {
 			temp = new Button() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
 			temp.Text = "Inventory2";
 			component.AddChild(temp);
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
-			component = ((BaseComponent)component).Parent;
+			if (component is not null) {
+				((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
+				component = ((BaseComponent)component).Parent;
+			}
 		}
 	}
 	public class GenerateMenu : IInitable {
 
-		private IParent component = GUI.Gui;
-		private BaseComponent temp;
+		private IParent? component = GUI.Gui;
+#pragma warning disable S1450
+		private BaseComponent? temp;
+#pragma warning restore S1450
 
 		public void Init() {
 			component = new GridPanel() { Parent = component, Columns = 2, MarginalSpace = new Margin(10), };
@@ -45,8 +51,10 @@ namespace Koko.Generated {
 			temp = new Button() { Parent = component, MarginalSpace = new Margin(5), BorderSpace = new Margin(1), };
 			temp.Text = "Quit Again";
 			component.AddChild(temp);
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
-			component = ((BaseComponent)component).Parent;
+			if (component is not null) {
+				((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
+				component = ((BaseComponent)component).Parent;
+			}
 			component = new GridPanel() { Parent = component, Columns = 2, MarginalSpace = new Margin(5), BackgroundColor = new Color(139, 69, 19, 255), BorderSpace = new Margin(1), };
 			temp = new Label() { Parent = component, MarginalSpace = new Margin(2), };
 			temp.Text = "Name:";
@@ -60,10 +68,14 @@ namespace Koko.Generated {
 			temp = new Label() { Parent = component, MarginalSpace = new Margin(2), };
 			temp.Text = "18";
 			component.AddChild(temp);
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
-			component = ((BaseComponent)component).Parent;
-			((BaseComponent)component).Parent.AddChild((BaseComponent)component);
-			component = ((BaseComponent)component).Parent;
+			if (component is not null) {
+				((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
+				component = ((BaseComponent)component).Parent;
+			}
+			if (component is not null) {
+				((BaseComponent)component).Parent?.AddChild((BaseComponent)component);
+				component = ((BaseComponent)component).Parent;
+			}
 		}
 	}
 }
