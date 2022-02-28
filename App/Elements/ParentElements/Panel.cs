@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using System.Diagnostics;
 
 namespace Koko.RunTimeGui;
 
@@ -74,7 +75,7 @@ public class Panel : BaseComponent, IParent {
 	private IParent? DoesContain(List<IComponent> components) {
 		IParent? IParent = null;
 		components.ForEach(c => {
-			if (c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
+			if (c != this && c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
 				var item = DoesContain(parent.GetChildren());
 				if (item is not null) {
 					IParent = item;
@@ -92,11 +93,12 @@ public class Panel : BaseComponent, IParent {
 	public override void Update() {
 		if (!IsRendering) return;
 
-		if (Default.MouseInteraction.Released(false)) {
+		if (Default.MouseInteraction.Released(false) && isHeld) {
 			isHeld = false;
+			Debug.WriteLine(this + " : " + Parent);
 
 			GUI.Gui.GetChildren().ForEach(c => {
-				if (c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
+				if (c != this && c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
 					var item = DoesContain(parent.GetChildren());
 					if (item is not null) {
 						Parent = item;
@@ -114,16 +116,18 @@ public class Panel : BaseComponent, IParent {
 
 		if (IsDraggable && Default.MouseInteraction.Pressed(false)) {
 
-			Parent.RemoveChild(this);
-			Parent = GUI.Gui;
-			Parent.AddChild(this);
-
 			var handleRect = new Rectangle(
 				new Point(ContentRectangle.Left, ContentRectangle.Bottom - DraggerHeight),
 				new Size(ContentRectangle.Width, DraggerHeight)
 			);
 
 			if (handleRect.Contains(GuiHelper.Mouse)) {
+				Debug.WriteLine("Pressed: " + this);
+
+				Parent.RemoveChild(this);
+				Parent = GUI.Gui;
+				Parent.AddChild(this);
+
 				offset = GuiHelper.Mouse - Position;
 				isHeld = true;
 			}
@@ -142,6 +146,10 @@ public class Panel : BaseComponent, IParent {
 
 	public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
 	public void RemoveChild(IComponent child) {
+
+		if (!ChildComponents.Contains(child))
+			throw new ArgumentException("No child found!");
+
 		ChildComponents.Remove(child);
 		Init();
 	}
