@@ -75,7 +75,7 @@ public class Panel : BaseComponent, IParent {
 	private IParent? DoesContain(List<IComponent> components) {
 		IParent? IParent = null;
 		components.ForEach(c => {
-			if (c != this && c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
+			if (c != this && c is IParent parent && c.ContentRectangle.Contains(ContentRectangle.Location)) {
 				var item = DoesContain(parent.GetChildren());
 				if (item is not null) {
 					IParent = item;
@@ -96,9 +96,9 @@ public class Panel : BaseComponent, IParent {
 		if (Default.MouseInteraction.Released(false) && isHeld) {
 			isHeld = false;
 			Debug.WriteLine(this + " : " + Parent);
-
+			Parent.RemoveChild(this);
 			GUI.Gui.GetChildren().ForEach(c => {
-				if (c != this && c is IParent parent && c.ContentRectangle.Contains(ContentRectangle)) {
+				if (c != this && c is IParent parent && c.ContentRectangle.Contains(ContentRectangle.Location)) {
 					var item = DoesContain(parent.GetChildren());
 					if (item is not null) {
 						Parent = item;
@@ -107,7 +107,7 @@ public class Panel : BaseComponent, IParent {
 					}
 				}
 			});
-
+			Parent.AddChild(this);
 			((IComponent)Parent).Init();
 		}
 
