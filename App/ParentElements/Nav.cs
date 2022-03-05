@@ -12,7 +12,7 @@ public class Nav : BaseParent, IChooseable<ISelectable> {
 	public bool IsRendering { get; set; } = true;
 	public bool IsDraggable { get; set; } = false;
 	public int DraggerHeight { get; set; } = 0;
-	private List<ISelectable> ChildComponents { get; set; } = new();
+	private List<IComponent> ChildComponents { get; set; } = new();
 
 	public override void Draw(SpriteBatch sb) {
 		for (int i = 0; i < ChildComponents.Count; i++) {
@@ -32,7 +32,8 @@ public class Nav : BaseParent, IChooseable<ISelectable> {
 
 		for (var i = 0; i < ChildComponents.Count; i++) {
 			ChildComponents[i].Init();
-			ChildComponents[i].OnClick += SetActive;
+			if (ChildComponents[i] is ISelectable selectable)
+				selectable.OnClick += SetActive;
 			width += ChildComponents[i].DisplayedSize.Width + ChildComponents[i].PaddingHorizontal;
 			height = Math.Max(ChildComponents[i].DisplayedSize.Height + ChildComponents[i].PaddingVertical, height);
 		}
@@ -68,20 +69,8 @@ public class Nav : BaseParent, IChooseable<ISelectable> {
 		}
 	}
 
-	public void AddChild(ISelectable newChild) {
-		ChildComponents.Add(newChild);
-	}
-
 	public void AddChild(IComponent newChild) {
-		if (newChild is not ISelectable)
-			throw new ArgumentException("New child is not an ISelectable");
-
-		AddChild((ISelectable)newChild);
-	}
-
-	public void RemoveChild(IComponent child) {
-		if (child is ISelectable selectable) ChildComponents.Remove(selectable);
-		throw new ArgumentException("Cant remove this object from the list!");
+		ChildComponents.Add(newChild);
 	}
 
 	public List<IComponent> GetChildren() {
