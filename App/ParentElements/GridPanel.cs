@@ -7,19 +7,9 @@ namespace Koko.RunTimeGui
 	/// <summary>
 	/// Panel Object that puts Components next to each other.
 	/// </summary>
-	public class GridPanel : BaseComponent, IParent {
+	public class GridPanel : BaseParent, IParent {
 
 		#region Properties
-
-		/// <summary>
-		/// Information on if this panel can be dragged.
-		/// </summary>
-		public bool IsDraggable { get; set; }
-
-		/// <summary>
-		/// The height of the dragPanel
-		/// </summary>
-		public int DraggerHeight { get; set; } = 20;
 
 		/// <summary>
 		/// The amount of components that should be put next to each other.
@@ -32,8 +22,6 @@ namespace Koko.RunTimeGui
 		protected int _nextChildIndex = 0;
 
 		public new Color? BackgroundColor { get; set; } = null;
-		public bool IsRendering { get; set; } = true;
-		private List<IComponent> ChildComponents { get; set; } = new();
 
 		#endregion
 
@@ -75,7 +63,7 @@ namespace Koko.RunTimeGui
 			return maxHeight;
 		}
 
-		public void UpdatePosition(Point newPosition) {
+		public override void UpdatePosition(Point newPosition) {
 			Position = newPosition;
 
 			int[] columnWidths = new int[Columns];
@@ -157,10 +145,6 @@ namespace Koko.RunTimeGui
 			foreach (var c in ChildComponents)
 				c.Draw(sb);
 		}
-
-		public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
-		public void RemoveChild(IComponent child) => ChildComponents.Remove(child);
-		public List<IComponent> GetChildren() => ChildComponents;
 
 		#endregion
 	}

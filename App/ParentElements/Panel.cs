@@ -5,14 +5,8 @@ using System.Diagnostics;
 
 namespace Koko.RunTimeGui;
 
-public class Panel : BaseComponent, IParent {
-	public bool IsRendering { get; set; } = true;
-	private List<IComponent> ChildComponents { get; set; } = new();
-
+public class Panel : BaseParent, IParent {
 	public new Color? BackgroundColor { get; set; } = null;
-	public bool IsDraggable { get; set; } = false;
-
-	public int DraggerHeight { get; set; } = 20;
 
 	public override void Draw(SpriteBatch sb) {
 		if (!IsRendering) return;
@@ -43,7 +37,7 @@ public class Panel : BaseComponent, IParent {
 			ChildComponents[i].Draw(sb);
 	}
 
-	public void UpdatePosition(Point newPosition) {
+	public override void UpdatePosition(Point newPosition) {
 		Position = newPosition;
 		int xpos = Position.X + PaddingLeft;
 		int ypos = Position.Y + PaddingTop;
@@ -95,7 +89,6 @@ public class Panel : BaseComponent, IParent {
 
 		if (Default.MouseInteraction.Released(false) && isHeld) {
 			isHeld = false;
-			Debug.WriteLine(this + " : " + Parent);
 			Parent.RemoveChild(this);
 			GUI.Gui.GetChildren().ForEach(c => {
 				if (c != this && c is IParent parent && c.ContentRectangle.Contains(ContentRectangle.Location)) {
@@ -143,15 +136,4 @@ public class Panel : BaseComponent, IParent {
 			width = Math.Max(ChildComponents[i].DisplayedSize.Width + ChildComponents[i].PaddingHorizontal, width);
 		return width;
 	}
-
-	public void AddChild(IComponent newChild) => ChildComponents.Add(newChild);
-	public void RemoveChild(IComponent child) {
-
-		if (!ChildComponents.Contains(child))
-			throw new ArgumentException("No child found!");
-
-		ChildComponents.Remove(child);
-		Init();
-	}
-	public List<IComponent> GetChildren() => ChildComponents;
 }

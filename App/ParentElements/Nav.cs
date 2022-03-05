@@ -7,7 +7,7 @@ namespace Koko.RunTimeGui;
 /// <summary>
 /// Container for navigatable elements, Does not choose children size or position.
 /// </summary>
-public class Nav : BaseComponent, IChooseable<ISelectable> {
+public class Nav : BaseParent, IChooseable<ISelectable> {
 	public ISelectable? CurrentSelectedComponent { get; set; } = null;
 	public bool IsRendering { get; set; } = true;
 	public bool IsDraggable { get; set; } = false;
@@ -51,7 +51,7 @@ public class Nav : BaseComponent, IChooseable<ISelectable> {
 		}
 	}
 
-	public void UpdatePosition(Point newPosition) {
+	public override void UpdatePosition(Point newPosition) {
 		Position = newPosition;
 
 		var x = newPosition.X;
